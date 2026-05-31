@@ -1287,6 +1287,143 @@ export const NITROBENZENE_REDUCTION: ReactionData = {
   energyProfile: [0, 40, -200],
 }
 
+// 炔烃加溴(1:2)反应数据
+export const ALKYNE_BR2: ReactionData = {
+  id: 'alkyne-br2',
+  name: '炔烃加溴(1:2)',
+  formula: 'HC≡CH + 2Br₂ → CHBr₂-CHBr₂',
+  category: 'addition',
+  description: '乙炔与过量溴发生两次加成反应',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'c2', element: 'C', position: [1.5, 0, 0] },
+    { id: 'h1', element: 'H', position: [-2.5, 0, 0] },
+    { id: 'h2', element: 'H', position: [2.5, 0, 0] },
+    { id: 'br1', element: 'Br', position: [4, 0.5, 0] },
+    { id: 'br2', element: 'Br', position: [5.5, 0.5, 0] },
+    { id: 'br3', element: 'Br', position: [4, -0.5, 0] },
+    { id: 'br4', element: 'Br', position: [5.5, -0.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'triple' },
+    { id: 'c1-h1', atom1Id: 'c1', atom2Id: 'h1', type: 'single' },
+    { id: 'c2-h2', atom1Id: 'c2', atom2Id: 'h2', type: 'single' },
+    { id: 'br1-br2', atom1Id: 'br1', atom2Id: 'br2', type: 'single' },
+    { id: 'br3-br4', atom1Id: 'br3', atom2Id: 'br4', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { br1: [4, 0.5, 0], br2: [5.5, 0.5, 0], br3: [4, -0.5, 0], br4: [5.5, -0.5, 0] } },
+    { progress: 30, atomPositions: { br1: [2.5, 0.5, 0], br2: [4.0, 0.5, 0], br3: [2.5, -0.5, 0], br4: [4.0, -0.5, 0] } },
+    { progress: 60, atomPositions: { br1: [1.0, 0.5, 0], br2: [2.5, 0.5, 0], br3: [1.0, -0.5, 0], br4: [2.5, -0.5, 0] }, bondOpacities: { 'br1-br2': 0, 'br3-br4': 0, 'c1-c2': 0.5 } },
+    { progress: 100, atomPositions: { br1: [0.5, 0.5, 0], br2: [1.5, 0.5, 0], br3: [0.5, -0.5, 0], br4: [1.5, -0.5, 0] }, bondOpacities: { 'c1-c2': 0 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙炔和2Br₂', concepts: ['C≡C三键'], progress: 0 },
+    { id: 'step2', name: '第一次加成', description: '三键变双键', concepts: ['加成'], progress: 30 },
+    { id: 'step3', name: '第二次加成', description: '双键变单键', concepts: ['加成'], progress: 60 },
+    { id: 'step4', name: '产物生成', description: '生成四溴乙烷', concepts: ['完全加成'], progress: 100 },
+  ],
+
+  energyProfile: [0, 20, 30, -190],
+}
+
+// 酯的水解反应数据
+export const ESTER_HYDROLYSIS: ReactionData = {
+  id: 'ester-hydrolysis',
+  name: '酯的水解',
+  formula: 'CH₃COOC₂H₅ + H₂O → CH₃COOH + C₂H₅OH',
+  category: 'substitution',
+  description: '乙酸乙酯水解为乙酸和乙醇',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-2, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [-0.5, 1.23, 0] },
+    { id: 'o2', element: 'O', position: [-0.5, -1.43, 0] },
+    { id: 'c3', element: 'C', position: [1.5, 0, 0] },
+    { id: 'c4', element: 'C', position: [3.0, 0, 0] },
+    { id: 'h1', element: 'H', position: [4.5, 0.5, 0] },
+    { id: 'o3', element: 'O', position: [5.5, 0.5, 0] },
+    { id: 'h2', element: 'H', position: [6.5, 0.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'double' },
+    { id: 'c2-o2', atom1Id: 'c2', atom2Id: 'o2', type: 'single' },
+    { id: 'o2-c3', atom1Id: 'o2', atom2Id: 'c3', type: 'single' },
+    { id: 'c3-c4', atom1Id: 'c3', atom2Id: 'c4', type: 'single' },
+    { id: 'o3-h2', atom1Id: 'o3', atom2Id: 'h2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { h1: [4.5, 0.5, 0], o3: [5.5, 0.5, 0], h2: [6.5, 0.5, 0] } },
+    { progress: 50, atomPositions: { h1: [2.5, 0.5, 0], o3: [3.5, 0.5, 0], h2: [4.5, 0.5, 0] } },
+    { progress: 100, atomPositions: { h1: [1.0, 0.5, 0], o3: [2.0, 0.5, 0], h2: [3.0, 0.5, 0] }, bondOpacities: { 'o2-c3': 0 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙酸乙酯和H₂O', concepts: ['酯', '水'], progress: 0 },
+    { id: 'step2', name: 'H₂O接近', description: 'H₂O向酯移动', concepts: ['水解'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成乙酸和乙醇', concepts: ['水解反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 15, -5],
+}
+
+// 使冷稀KMnO₄褪色反应数据
+export const KMNO4_DECOLORIZATION: ReactionData = {
+  id: 'kmno4-decolorization',
+  name: 'KMnO₄褪色',
+  formula: '烯烃 + KMnO₄ → 褪色',
+  category: 'oxidation',
+  description: '烯烃使酸性高锰酸钾溶液褪色',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.16, 0, 0] },
+    { id: 'h1', element: 'H', position: [-2.04, 0.935, 0] },
+    { id: 'h2', element: 'H', position: [-2.04, -0.935, 0] },
+    { id: 'h3', element: 'H', position: [0.38, 0.935, 0] },
+    { id: 'h4', element: 'H', position: [0.38, -0.935, 0] },
+    { id: 'mn', element: 'Fe', position: [3.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [4.5, 0.8, 0] },
+    { id: 'o2', element: 'O', position: [4.5, -0.8, 0] },
+    { id: 'o3', element: 'O', position: [3.5, 1.5, 0] },
+    { id: 'o4', element: 'O', position: [3.5, -1.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'double' },
+    { id: 'c1-h1', atom1Id: 'c1', atom2Id: 'h1', type: 'single' },
+    { id: 'c1-h2', atom1Id: 'c1', atom2Id: 'h2', type: 'single' },
+    { id: 'c2-h3', atom1Id: 'c2', atom2Id: 'h3', type: 'single' },
+    { id: 'c2-h4', atom1Id: 'c2', atom2Id: 'h4', type: 'single' },
+    { id: 'mn-o1', atom1Id: 'mn', atom2Id: 'o1', type: 'double' },
+    { id: 'mn-o2', atom1Id: 'mn', atom2Id: 'o2', type: 'double' },
+    { id: 'mn-o3', atom1Id: 'mn', atom2Id: 'o3', type: 'single' },
+    { id: 'mn-o4', atom1Id: 'mn', atom2Id: 'o4', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { mn: [3.5, 0, 0], o1: [4.5, 0.8, 0], o2: [4.5, -0.8, 0], o3: [3.5, 1.5, 0], o4: [3.5, -1.5, 0] } },
+    { progress: 50, atomPositions: { mn: [1.5, 0, 0], o1: [2.5, 0.8, 0], o2: [2.5, -0.8, 0], o3: [1.5, 1.5, 0], o4: [1.5, -1.5, 0] } },
+    { progress: 100, atomPositions: { mn: [0.5, 0, 0], o1: [1.5, 0.8, 0], o2: [1.5, -0.8, 0], o3: [0.5, 1.5, 0], o4: [0.5, -1.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '烯烃和KMnO₄', concepts: ['C=C双键', 'MnO₄⁻'], progress: 0 },
+    { id: 'step2', name: 'KMnO₄接近', description: 'MnO₄⁻向烯烃移动', concepts: ['氧化剂'], progress: 50 },
+    { id: 'step3', name: '褪色反应', description: '紫色褪去', concepts: ['氧化反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 20, -50],
+}
+
 // 所有反应数据（扩展到38种）
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   // 取代反应
@@ -1297,6 +1434,7 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'esterification': ESTERIFICATION,
   'haloalkane-hydrolysis': HALOALKANE_HYDROLYSIS,
   'phenol-bromine': PHENOL_BROMINE,
+  'ester-hydrolysis': ESTER_HYDROLYSIS,
   
   // 加成反应
   'hydrogenation': HYDROGENATION,
@@ -1306,6 +1444,7 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'aldehyde-hydrogenation': ALDEHYDE_HYDROGENATION,
   'alkene-hx': ALKENE_HX,
   'alkyne-br': ALKYNE_BR,
+  'alkyne-br2': ALKYNE_BR2,
   
   // 消去反应
   'ethanol-elimination': ETHANOL_ELIMINATION,
@@ -1315,6 +1454,7 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'silver-mirror': SILVER_MIRROR,
   'alcohol-oxidation': ALCOHOL_OXIDATION,
   'aldehyde-oxidation': ALDEHYDE_OXIDATION,
+  'kmno4-decolorization': KMNO4_DECOLORIZATION,
   
   // 还原反应
   'nitrobenzene-reduction': NITROBENZENE_REDUCTION,

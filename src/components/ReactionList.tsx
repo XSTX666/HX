@@ -22,6 +22,7 @@ const CATEGORIES: ReactionCategory[] = [
       { id: 'esterification', name: '酯化反应', formula: 'CH₃COOH + C₂H₅OH → 酯 + H₂O' },
       { id: 'haloalkane-hydrolysis', name: '卤代烃水解', formula: 'C₂H₅Br + NaOH → C₂H₅OH' },
       { id: 'phenol-bromine', name: '苯酚+溴水', formula: 'C₆H₅OH + 3Br₂ → 沉淀' },
+      { id: 'ester-hydrolysis', name: '酯的水解', formula: 'CH₃COOC₂H₅ + H₂O → 酸+醇' },
     ],
   },
   {
@@ -34,6 +35,7 @@ const CATEGORIES: ReactionCategory[] = [
       { id: 'alkene-hx', name: '烯烃加卤化氢', formula: 'CH₂=CH₂ + HBr → CH₃CH₂Br' },
       { id: 'alkyne-hydrogenation', name: '炔烃加氢', formula: 'HC≡CH + 2H₂ → CH₃CH₃' },
       { id: 'alkyne-br', name: '炔烃加溴(1:1)', formula: 'HC≡CH + Br₂ → CHBr=CHBr' },
+      { id: 'alkyne-br2', name: '炔烃加溴(1:2)', formula: 'HC≡CH + 2Br₂ → CHBr₂CHBr₂' },
       { id: 'benzene-hydrogenation', name: '苯环加氢', formula: 'C₆H₆ + 3H₂ → C₆H₁₂' },
       { id: 'aldehyde-hydrogenation', name: '醛酮加氢', formula: 'CH₃CHO + H₂ → CH₃CH₂OH' },
     ],
@@ -55,6 +57,7 @@ const CATEGORIES: ReactionCategory[] = [
       { id: 'silver-mirror', name: '银镜反应', formula: 'CH₃CHO + Ag⁺ → 银镜' },
       { id: 'alcohol-oxidation', name: '醇→醛氧化', formula: '2C₂H₅OH + O₂ → 2CH₃CHO' },
       { id: 'aldehyde-oxidation', name: '醛→酸氧化', formula: '2CH₃CHO + O₂ → 2CH₃COOH' },
+      { id: 'kmno4-decolorization', name: 'KMnO₄褪色', formula: '烯烃 + KMnO₄ → 褪色' },
     ],
   },
   {
