@@ -510,6 +510,128 @@ export const ALKENE_HALOGENATION: ReactionData = {
   energyProfile: [0, 20, 40, -120],
 }
 
+// 苯的磺化反应数据
+export const BENZENE_SULFONATION: ReactionData = {
+  id: 'benzene-sulfonation',
+  name: '苯的磺化反应',
+  formula: 'C₆H₆ + H₂SO₄ → C₆H₅SO₃H + H₂O',
+  category: 'substitution',
+  description: '苯与浓硫酸发生磺化反应',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 's1', element: 'S', position: [3.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [4.5, 0.8, 0] },
+    { id: 'o2', element: 'O', position: [4.5, -0.8, 0] },
+    { id: 'o3', element: 'O', position: [3.5, 1.5, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 's1-o1', atom1Id: 's1', atom2Id: 'o1', type: 'double' },
+    { id: 's1-o2', atom1Id: 's1', atom2Id: 'o2', type: 'double' },
+    { id: 's1-o3', atom1Id: 's1', atom2Id: 'o3', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { s1: [3.5, 0, 0], o1: [4.5, 0.8, 0], o2: [4.5, -0.8, 0], o3: [3.5, 1.5, 0] } },
+    { progress: 50, atomPositions: { s1: [1.8, 1.0, 0], o1: [2.8, 1.8, 0], o2: [2.8, 0.2, 0], o3: [1.8, 2.0, 0] } },
+    { progress: 100, atomPositions: { s1: [1.5, 1.40, 0], o1: [2.5, 2.2, 0], o2: [2.5, 0.6, 0], o3: [1.5, 2.4, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '苯和H₂SO₄', concepts: ['苯环', '硫酸'], progress: 0 },
+    { id: 'step2', name: 'SO₃生成', description: 'H₂SO₄分解', concepts: ['亲电试剂'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成苯磺酸', concepts: ['亲电取代'], progress: 100 },
+  ],
+
+  energyProfile: [0, 35, -15],
+}
+
+// 银镜反应数据
+export const SILVER_MIRROR: ReactionData = {
+  id: 'silver-mirror',
+  name: '银镜反应',
+  formula: 'CH₃CHO + 2Ag(NH₃)₂OH → CH₃COONH₄ + 2Ag↓ + 3NH₃ + H₂O',
+  category: 'oxidation',
+  description: '乙醛与银氨溶液反应生成银镜',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-2, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [-0.5, 1.23, 0] },
+    { id: 'h1', element: 'H', position: [-0.5, -1.0, 0] },
+    { id: 'ag1', element: 'Ag', position: [3, 0, 0] },
+    { id: 'ag2', element: 'Ag', position: [4.5, 0, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'double' },
+    { id: 'c2-h1', atom1Id: 'c2', atom2Id: 'h1', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { ag1: [3, 0, 0], ag2: [4.5, 0, 0] } },
+    { progress: 50, atomPositions: { ag1: [1.5, 0.5, 0], ag2: [3.0, 0.5, 0] } },
+    { progress: 100, atomPositions: { ag1: [0.5, 0.5, 0], ag2: [1.5, 0.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙醛和银氨溶液', concepts: ['醛基', 'Ag⁺'], progress: 0 },
+    { id: 'step2', name: 'Ag⁺接近', description: 'Ag⁺向醛基移动', concepts: ['氧化剂'], progress: 50 },
+    { id: 'step3', name: '银镜生成', description: '生成银镜', concepts: ['银镜反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 25, -80],
+}
+
+// 醛酮加氢反应数据
+export const ALDEHYDE_HYDROGENATION: ReactionData = {
+  id: 'aldehyde-hydrogenation',
+  name: '醛酮加氢',
+  formula: 'CH₃CHO + H₂ → CH₃CH₂OH',
+  category: 'reduction',
+  description: '乙醛与氢气发生加氢还原反应',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-2, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [-0.5, 1.23, 0] },
+    { id: 'h1', element: 'H', position: [-0.5, -1.0, 0] },
+    { id: 'h2', element: 'H', position: [3, 0.5, 0] },
+    { id: 'h3', element: 'H', position: [4.09, 0.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'double' },
+    { id: 'c2-h1', atom1Id: 'c2', atom2Id: 'h1', type: 'single' },
+    { id: 'h2-h3', atom1Id: 'h2', atom2Id: 'h3', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { h2: [3, 0.5, 0], h3: [4.09, 0.5, 0] } },
+    { progress: 50, atomPositions: { h2: [1.5, 0.5, 0], h3: [2.5, 0.5, 0] } },
+    { progress: 100, atomPositions: { h2: [0, 0.5, 0], h3: [1.0, 0.5, 0] }, bondOpacities: { 'h2-h3': 0, 'c2-o1': 0.5 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙醛和H₂', concepts: ['醛基', 'C=O'], progress: 0 },
+    { id: 'step2', name: 'H₂接近', description: 'H₂向醛基移动', concepts: ['还原剂'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成乙醇', concepts: ['加氢还原'], progress: 100 },
+  ],
+
+  energyProfile: [0, 30, -70],
+}
+
 // 所有反应数据
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   'alkane-halogenation': ALKANE_HALOGENATION,
@@ -521,4 +643,7 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'benzene-nitration': BENZENE_NITRATION,
   'combustion': COMBUSTION,
   'alkene-halogenation': ALKENE_HALOGENATION,
+  'benzene-sulfonation': BENZENE_SULFONATION,
+  'silver-mirror': SILVER_MIRROR,
+  'aldehyde-hydrogenation': ALDEHYDE_HYDROGENATION,
 }
