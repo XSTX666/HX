@@ -1,5 +1,6 @@
 import { useAppStore } from '../store/appStore'
 import { ALL_REACTIONS } from '../data/reactions'
+import EnergyDiagram from './EnergyDiagram'
 
 export default function MechPanel() {
   const { currentReaction, progress } = useAppStore()
@@ -37,22 +38,7 @@ export default function MechPanel() {
       )}
 
       {/* 能量图 */}
-      <div
-        className="rounded-xl mb-4 overflow-hidden"
-        style={{
-          background: 'rgba(0,0,0,0.3)',
-          border: '1px solid rgba(79,172,254,0.12)',
-          height: '140px',
-          position: 'relative',
-        }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-2xl mb-2">⚡</div>
-            <div className="text-xs" style={{ color: '#6a7090' }}>能量图</div>
-          </div>
-        </div>
-      </div>
+      <EnergyDiagram />
 
       {/* 机理步骤 */}
       <div className="flex flex-col gap-2">
