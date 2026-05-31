@@ -1158,6 +1158,135 @@ export const PROTEIN_HNO3: ReactionData = {
   energyProfile: [0, 10, -5],
 }
 
+// 烯烃加卤化氢反应数据
+export const ALKENE_HX: ReactionData = {
+  id: 'alkene-hx',
+  name: '烯烃加卤化氢',
+  formula: 'CH₂=CH₂ + HBr → CH₃CH₂Br',
+  category: 'addition',
+  description: '乙烯与溴化氢发生加成反应',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.16, 0, 0] },
+    { id: 'h1', element: 'H', position: [-2.04, 0.935, 0] },
+    { id: 'h2', element: 'H', position: [-2.04, -0.935, 0] },
+    { id: 'h3', element: 'H', position: [0.38, 0.935, 0] },
+    { id: 'h4', element: 'H', position: [0.38, -0.935, 0] },
+    { id: 'h5', element: 'H', position: [3, 0.5, 0] },
+    { id: 'br', element: 'Br', position: [4.5, 0.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'double' },
+    { id: 'c1-h1', atom1Id: 'c1', atom2Id: 'h1', type: 'single' },
+    { id: 'c1-h2', atom1Id: 'c1', atom2Id: 'h2', type: 'single' },
+    { id: 'c2-h3', atom1Id: 'c2', atom2Id: 'h3', type: 'single' },
+    { id: 'c2-h4', atom1Id: 'c2', atom2Id: 'h4', type: 'single' },
+    { id: 'h5-br', atom1Id: 'h5', atom2Id: 'br', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { h5: [3, 0.5, 0], br: [4.5, 0.5, 0] } },
+    { progress: 50, atomPositions: { h5: [1.5, 0.5, 0], br: [3.0, 0.5, 0] } },
+    { progress: 100, atomPositions: { h5: [0.5, 0.5, 0], br: [1.5, 0.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙烯和HBr', concepts: ['C=C双键'], progress: 0 },
+    { id: 'step2', name: 'HBr接近', description: 'HBr向乙烯移动', concepts: ['亲电加成'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成溴乙烷', concepts: ['Markovnikov规则'], progress: 100 },
+  ],
+
+  energyProfile: [0, 20, -70],
+}
+
+// 炔烃加溴(1:1)反应数据
+export const ALKYNE_BR: ReactionData = {
+  id: 'alkyne-br',
+  name: '炔烃加溴(1:1)',
+  formula: 'HC≡CH + Br₂ → CHBr=CHBr',
+  category: 'addition',
+  description: '乙炔与溴发生1:1加成反应',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'c2', element: 'C', position: [1.5, 0, 0] },
+    { id: 'h1', element: 'H', position: [-2.5, 0, 0] },
+    { id: 'h2', element: 'H', position: [2.5, 0, 0] },
+    { id: 'br1', element: 'Br', position: [4, 0.5, 0] },
+    { id: 'br2', element: 'Br', position: [5.5, 0.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'triple' },
+    { id: 'c1-h1', atom1Id: 'c1', atom2Id: 'h1', type: 'single' },
+    { id: 'c2-h2', atom1Id: 'c2', atom2Id: 'h2', type: 'single' },
+    { id: 'br1-br2', atom1Id: 'br1', atom2Id: 'br2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { br1: [4, 0.5, 0], br2: [5.5, 0.5, 0] } },
+    { progress: 50, atomPositions: { br1: [2, 0.5, 0], br2: [3.5, 0.5, 0] } },
+    { progress: 100, atomPositions: { br1: [0.5, 0.5, 0], br2: [2.0, 0.5, 0] }, bondOpacities: { 'br1-br2': 0, 'c1-c2': 0.5 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙炔和Br₂', concepts: ['C≡C三键'], progress: 0 },
+    { id: 'step2', name: 'Br₂接近', description: 'Br₂向三键移动', concepts: ['亲电加成'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成1,2-二溴乙烯', concepts: ['加成反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 20, -100],
+}
+
+// 硝基苯还原反应数据
+export const NITROBENZENE_REDUCTION: ReactionData = {
+  id: 'nitrobenzene-reduction',
+  name: '硝基苯还原',
+  formula: 'C₆H₅NO₂ + 3H₂ → C₆H₅NH₂ + 2H₂O',
+  category: 'reduction',
+  description: '硝基苯还原为苯胺',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 'n', element: 'N', position: [0, 2.5, 0] },
+    { id: 'o1', element: 'O', position: [-1.0, 3.0, 0] },
+    { id: 'o2', element: 'O', position: [1.0, 3.0, 0] },
+    { id: 'h1', element: 'H', position: [3.5, 0.5, 0] },
+    { id: 'h2', element: 'H', position: [4.5, 0.5, 0] },
+    { id: 'h3', element: 'H', position: [3.5, -0.5, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'rc0-n', atom1Id: 'rc0', atom2Id: 'n', type: 'single' },
+    { id: 'n-o1', atom1Id: 'n', atom2Id: 'o1', type: 'double' },
+    { id: 'n-o2', atom1Id: 'n', atom2Id: 'o2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { h1: [3.5, 0.5, 0], h2: [4.5, 0.5, 0], h3: [3.5, -0.5, 0] } },
+    { progress: 50, atomPositions: { h1: [1.5, 0.5, 0], h2: [2.5, 0.5, 0], h3: [1.5, -0.5, 0] } },
+    { progress: 100, atomPositions: { h1: [0.5, 2.5, 0], h2: [1.5, 2.5, 0], h3: [0.5, 3.5, 0] }, bondOpacities: { 'n-o1': 0, 'n-o2': 0 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '硝基苯和H₂', concepts: ['硝基', '还原'], progress: 0 },
+    { id: 'step2', name: 'H₂接近', description: 'H₂向硝基移动', concepts: ['还原剂'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成苯胺', concepts: ['还原反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 40, -200],
+}
+
 // 所有反应数据（扩展到38种）
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   // 取代反应
@@ -1175,6 +1304,8 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'alkyne-hydrogenation': ALKYNE_HYDROGENATION,
   'benzene-hydrogenation': BENZENE_HYDROGENATION,
   'aldehyde-hydrogenation': ALDEHYDE_HYDROGENATION,
+  'alkene-hx': ALKENE_HX,
+  'alkyne-br': ALKYNE_BR,
   
   // 消去反应
   'ethanol-elimination': ETHANOL_ELIMINATION,
@@ -1184,6 +1315,9 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'silver-mirror': SILVER_MIRROR,
   'alcohol-oxidation': ALCOHOL_OXIDATION,
   'aldehyde-oxidation': ALDEHYDE_OXIDATION,
+  
+  // 还原反应
+  'nitrobenzene-reduction': NITROBENZENE_REDUCTION,
   
   // 聚合反应
   'addition-poly': ADDITION_POLY,

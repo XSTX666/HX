@@ -31,7 +31,9 @@ const CATEGORIES: ReactionCategory[] = [
     items: [
       { id: 'hydrogenation', name: '烯烃加氢', formula: 'CH₂=CH₂ + H₂ → CH₃CH₃' },
       { id: 'alkene-halogenation', name: '烯烃加卤素', formula: 'CH₂=CH₂ + Br₂ → CH₂BrCH₂Br' },
+      { id: 'alkene-hx', name: '烯烃加卤化氢', formula: 'CH₂=CH₂ + HBr → CH₃CH₂Br' },
       { id: 'alkyne-hydrogenation', name: '炔烃加氢', formula: 'HC≡CH + 2H₂ → CH₃CH₃' },
+      { id: 'alkyne-br', name: '炔烃加溴(1:1)', formula: 'HC≡CH + Br₂ → CHBr=CHBr' },
       { id: 'benzene-hydrogenation', name: '苯环加氢', formula: 'C₆H₆ + 3H₂ → C₆H₁₂' },
       { id: 'aldehyde-hydrogenation', name: '醛酮加氢', formula: 'CH₃CHO + H₂ → CH₃CH₂OH' },
     ],
@@ -53,6 +55,14 @@ const CATEGORIES: ReactionCategory[] = [
       { id: 'silver-mirror', name: '银镜反应', formula: 'CH₃CHO + Ag⁺ → 银镜' },
       { id: 'alcohol-oxidation', name: '醇→醛氧化', formula: '2C₂H₅OH + O₂ → 2CH₃CHO' },
       { id: 'aldehyde-oxidation', name: '醛→酸氧化', formula: '2CH₃CHO + O₂ → 2CH₃COOH' },
+    ],
+  },
+  {
+    icon: '⚡',
+    title: '还原反应',
+    color: '#a855f7',
+    items: [
+      { id: 'nitrobenzene-reduction', name: '硝基苯还原', formula: 'C₆H₅NO₂ + 3H₂ → C₆H₅NH₂' },
     ],
   },
   {
