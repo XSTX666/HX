@@ -1424,6 +1424,88 @@ export const KMNO4_DECOLORIZATION: ReactionData = {
   energyProfile: [0, 20, -50],
 }
 
+// 醇+氢卤酸反应数据
+export const ALCOHOL_HX: ReactionData = {
+  id: 'alcohol-hx',
+  name: '醇+氢卤酸',
+  formula: 'C₂H₅OH + HBr → C₂H₅Br + H₂O',
+  category: 'substitution',
+  description: '乙醇与氢溴酸发生取代反应',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-2, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.5, 0, 0] },
+    { id: 'o', element: 'O', position: [-0.5, 1.43, 0] },
+    { id: 'h1', element: 'H', position: [-0.5, 2.39, 0] },
+    { id: 'h2', element: 'H', position: [3, 0.5, 0] },
+    { id: 'br', element: 'Br', position: [4.5, 0.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o', atom1Id: 'c2', atom2Id: 'o', type: 'single' },
+    { id: 'o-h1', atom1Id: 'o', atom2Id: 'h1', type: 'single' },
+    { id: 'h2-br', atom1Id: 'h2', atom2Id: 'br', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { h2: [3, 0.5, 0], br: [4.5, 0.5, 0] } },
+    { progress: 50, atomPositions: { h2: [1.5, 0.5, 0], br: [3.0, 0.5, 0] } },
+    { progress: 100, atomPositions: { h2: [0.5, 2.0, 0], br: [0, 1.5, 0] }, bondOpacities: { 'o-h1': 0, 'h2-br': 0 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙醇和HBr', concepts: ['醇', '氢卤酸'], progress: 0 },
+    { id: 'step2', name: 'HBr接近', description: 'HBr向乙醇移动', concepts: ['取代'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成溴乙烷', concepts: ['取代反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 20, -30],
+}
+
+// 分子间脱水(成醚)反应数据
+export const DEHYDRATION_ETHER: ReactionData = {
+  id: 'dehydration-ether',
+  name: '分子间脱水',
+  formula: '2C₂H₅OH → C₂H₅OC₂H₅ + H₂O',
+  category: 'substitution',
+  description: '乙醇分子间脱水生成乙醚',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-3, 0, 0] },
+    { id: 'c2', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [-1.5, 1.43, 0] },
+    { id: 'h1', element: 'H', position: [-1.5, 2.39, 0] },
+    { id: 'c3', element: 'C', position: [1.5, 0, 0] },
+    { id: 'c4', element: 'C', position: [3.0, 0, 0] },
+    { id: 'o2', element: 'O', position: [3.0, 1.43, 0] },
+    { id: 'h2', element: 'H', position: [3.0, 2.39, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'single' },
+    { id: 'o1-h1', atom1Id: 'o1', atom2Id: 'h1', type: 'single' },
+    { id: 'c3-c4', atom1Id: 'c3', atom2Id: 'c4', type: 'single' },
+    { id: 'c4-o2', atom1Id: 'c4', atom2Id: 'o2', type: 'single' },
+    { id: 'o2-h2', atom1Id: 'o2', atom2Id: 'h2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: {} },
+    { progress: 50, atomPositions: { c3: [0.5, 0, 0], c4: [2.0, 0, 0], o2: [2.0, 1.43, 0], h2: [2.0, 2.39, 0] } },
+    { progress: 100, atomPositions: { c3: [0, 0, 0], c4: [1.5, 0, 0], o2: [1.5, 1.43, 0], h2: [4.0, 2.0, 0] }, bondOpacities: { 'o2-h2': 0 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '两个乙醇分子', concepts: ['醇', '脱水'], progress: 0 },
+    { id: 'step2', name: '分子靠近', description: '乙醇分子靠近', concepts: ['酸催化'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成乙醚', concepts: ['分子间脱水'], progress: 100 },
+  ],
+
+  energyProfile: [0, 15, -5],
+}
+
 // 所有反应数据（扩展到38种）
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   // 取代反应
@@ -1435,6 +1517,8 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'haloalkane-hydrolysis': HALOALKANE_HYDROLYSIS,
   'phenol-bromine': PHENOL_BROMINE,
   'ester-hydrolysis': ESTER_HYDROLYSIS,
+  'alcohol-hx': ALCOHOL_HX,
+  'dehydration-ether': DEHYDRATION_ETHER,
   
   // 加成反应
   'hydrogenation': HYDROGENATION,

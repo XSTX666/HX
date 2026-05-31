@@ -23,6 +23,8 @@ const CATEGORIES: ReactionCategory[] = [
       { id: 'haloalkane-hydrolysis', name: '卤代烃水解', formula: 'C₂H₅Br + NaOH → C₂H₅OH' },
       { id: 'phenol-bromine', name: '苯酚+溴水', formula: 'C₆H₅OH + 3Br₂ → 沉淀' },
       { id: 'ester-hydrolysis', name: '酯的水解', formula: 'CH₃COOC₂H₅ + H₂O → 酸+醇' },
+      { id: 'alcohol-hx', name: '醇+氢卤酸', formula: 'C₂H₅OH + HBr → C₂H₅Br' },
+      { id: 'dehydration-ether', name: '分子间脱水', formula: '2C₂H₅OH → 乙醚 + H₂O' },
     ],
   },
   {
