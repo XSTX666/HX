@@ -60,7 +60,7 @@ const CATEGORIES: ReactionCategory[] = [
     title: '还原反应',
     color: '#a855f7',
     items: [
-      { id: 'aldehyde-hydrogenation', name: '醛酮加氢', formula: 'CH₃CHO + H₂ → CH₃CH₂OH' },
+      // 醛酮加氢已在加成反应中
     ],
   },
   {

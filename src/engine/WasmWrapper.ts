@@ -7,7 +7,7 @@ interface WasmModule {
   ease_in_out_cubic: (t: number) => number
 }
 
-let wasmModule: WasmModule | null = null
+let wasmModule: WasmModule | null = null  // eslint-disable-line prefer-const
 
 // 初始化WASM模块
 export async function initWasm(): Promise<boolean> {
