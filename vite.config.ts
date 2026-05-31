@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
-    allowedHosts: ['3000-e514d3d9234b243e.monkeycode-ai.online'],
+    allowedHosts: true,
   },
   build: {
     outDir: 'dist',
