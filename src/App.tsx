@@ -14,14 +14,13 @@ export default function App() {
     progress, 
     setProgress, 
     speed,
-    setCurrentStage 
   } = useAppStore()
   
   const animRef = useRef<number | null>(null)
   const lastTimeRef = useRef<number>(0)
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1500)
+    const timer = setTimeout(() => setLoading(false), 2000)
     return () => clearTimeout(timer)
   }, [])
 
@@ -73,8 +72,11 @@ export default function App() {
             className="fixed inset-0 z-50 flex flex-col items-center justify-center"
             style={{ background: 'linear-gradient(135deg, #0a0a1a, #1a1a3a)' }}
           >
-            <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
-            <p className="mt-5 text-gray-400 text-sm">加载 3D 场景...</p>
+            <div className="relative">
+              <div className="w-16 h-16 border-4 border-blue-500/20 rounded-full" />
+              <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-blue-500 rounded-full animate-spin" />
+            </div>
+            <p className="mt-5 text-gray-400 text-sm tracking-wider">加载 3D 场景...</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -85,18 +87,33 @@ export default function App() {
         gridTemplateRows: 'auto 1fr auto',
       }}>
         {/* 顶部栏 */}
-        <header className="col-span-3 px-5 py-3 flex items-center justify-between"
+        <header className="col-span-3 px-6 py-3 flex items-center justify-between"
           style={{ 
             background: 'rgba(14,18,32,0.95)',
-            borderBottom: '1px solid rgba(79,172,254,0.15)'
+            borderBottom: '1px solid rgba(79,172,254,0.12)',
+            backdropFilter: 'blur(24px)',
           }}>
-          <h1 className="text-lg font-bold">化学3D机理可视化</h1>
-          <div className="px-3 py-1 rounded-full text-sm"
-            style={{ 
-              background: 'rgba(79,172,254,0.15)',
-              color: '#4facfe'
+          <div className="flex items-center gap-3">
+            <h1 className="text-lg font-bold tracking-wide" style={{
+              background: 'linear-gradient(135deg, #4facfe, #00f2c3)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
             }}>
-            {currentReaction || '选择一个反应开始'}
+              化学3D机理可视化
+            </h1>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {currentReaction && (
+              <div className="px-4 py-1.5 rounded-full text-sm font-medium"
+                style={{ 
+                  background: 'rgba(79,172,254,0.12)',
+                  border: '1px solid rgba(79,172,254,0.25)',
+                  color: '#4facfe',
+                }}>
+                {currentReaction}
+              </div>
+            )}
           </div>
         </header>
 
