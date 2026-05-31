@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '../store/appStore'
-import { ALL_REACTIONS } from '../data/reactions'
 
 interface ReactionCategory {
   icon: string

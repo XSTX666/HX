@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react'
+import { useMemo } from 'react'
 import * as THREE from 'three'
 import { AtomData, BondData } from '../data/types'
 
@@ -85,11 +85,9 @@ export function Bond({
 export function Molecule({ 
   atoms, 
   bonds,
-  showLabels = false,
 }: {
   atoms: AtomData[]
   bonds: BondData[]
-  showLabels?: boolean
 }) {
   // 创建原子位置映射
   const atomPositions = useMemo(() => {

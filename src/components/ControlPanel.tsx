@@ -3,7 +3,7 @@ import { useAppStore } from '../store/appStore'
 export default function ControlPanel() {
   const {
     isPlaying, setIsPlaying,
-    progress, setProgress,
+    progress,
     speed, setSpeed,
     showLabels, toggleLabels,
     isSpinning, toggleSpin,

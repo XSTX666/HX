@@ -57,8 +57,6 @@ export async function getBestRenderer(canvas: HTMLCanvasElement): Promise<{
 
 // 渲染器配置
 export function configureRenderer(renderer: THREE.WebGLRenderer | THREE.WebGPURenderer, isWebGPU: boolean) {
-  const THREE = require('three')
-  
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap

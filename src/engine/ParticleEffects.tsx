@@ -11,6 +11,12 @@ interface ParticleEffectProps {
   active?: boolean
 }
 
+// 生成稳定的随机数
+function stableRandom(seed: number): number {
+  const x = Math.sin(seed * 12.9898 + seed * 78.233) * 43758.5453
+  return x - Math.floor(x)
+}
+
 export default function ParticleEffect({
   position,
   color = '#4facfe',
@@ -21,25 +27,28 @@ export default function ParticleEffect({
 }: ParticleEffectProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null!)
   const dummy = useMemo(() => new THREE.Object3D(), [])
+  
+  // 使用稳定的随机数生成速度
   const velocities = useMemo(() => {
-    return Array.from({ length: count }, () => ({
-      x: (Math.random() - 0.5) * speed * 0.1,
-      y: (Math.random() - 0.5) * speed * 0.1,
-      z: (Math.random() - 0.5) * speed * 0.1,
+    return Array.from({ length: count }, (_, i) => ({
+      x: (stableRandom(i * 3) - 0.5) * speed * 0.1,
+      y: (stableRandom(i * 3 + 1) - 0.5) * speed * 0.1,
+      z: (stableRandom(i * 3 + 2) - 0.5) * speed * 0.1,
     }))
   }, [count, speed])
 
-  useFrame((_, delta) => {
+  useFrame(() => {
     if (!meshRef.current || !active) return
 
+    const time = Date.now() * 0.001
     for (let i = 0; i < count; i++) {
       const vel = velocities[i]
       dummy.position.set(
-        position[0] + vel.x * Math.sin(Date.now() * 0.001 + i),
-        position[1] + vel.y * Math.cos(Date.now() * 0.001 + i),
-        position[2] + vel.z * Math.sin(Date.now() * 0.001 + i * 0.5)
+        position[0] + vel.x * Math.sin(time + i),
+        position[1] + vel.y * Math.cos(time + i),
+        position[2] + vel.z * Math.sin(time + i * 0.5)
       )
-      dummy.scale.setScalar(size * (0.5 + Math.random() * 0.5))
+      dummy.scale.setScalar(size * (0.5 + stableRandom(i) * 0.5))
       dummy.updateMatrix()
       meshRef.current.setMatrixAt(i, dummy.matrix)
     }
@@ -63,10 +72,9 @@ export default function ParticleEffect({
 interface TrailEffectProps {
   positions: [number, number, number][]
   color?: string
-  width?: number
 }
 
-export function TrailEffect({ positions, color = '#4facfe', width = 0.02 }: TrailEffectProps) {
+export function TrailEffect({ positions, color = '#4facfe' }: TrailEffectProps) {
   if (positions.length < 2) return null
 
   return (

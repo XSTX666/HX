@@ -4,7 +4,7 @@ import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useAppStore } from '../store/appStore'
 import { ALL_REACTIONS } from '../data/reactions'
-import ParticleEffect, { BondBreakEffect } from '../engine/ParticleEffects'
+import { BondBreakEffect } from '../engine/ParticleEffects'
 import { checkWebGPUSupport } from '../engine/WebGPUDetector'
 
 // 原子颜色和半径
