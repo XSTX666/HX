@@ -1659,6 +1659,133 @@ export const TNT_NITRATION: ReactionData = {
   energyProfile: [0, 30, 40, 50, -150],
 }
 
+// 添加缺失的反应：醇→醛催化氧化
+export const ALCOHOL_TO_ALDEHYDE: ReactionData = {
+  id: 'alcohol-to-aldehyde',
+  name: '醇→醛催化氧化',
+  formula: '2C₂H₅OH + O₂ → 2CH₃CHO + 2H₂O',
+  category: 'oxidation',
+  description: '乙醇在铜催化下氧化为乙醛',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-2, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [-0.5, 1.43, 0] },
+    { id: 'h1', element: 'H', position: [-0.5, 2.39, 0] },
+    { id: 'o2', element: 'O', position: [3, 0, 0] },
+    { id: 'o3', element: 'O', position: [4.5, 0, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'single' },
+    { id: 'o1-h1', atom1Id: 'o1', atom2Id: 'h1', type: 'single' },
+    { id: 'o2-o3', atom1Id: 'o2', atom2Id: 'o3', type: 'double' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { o2: [3, 0, 0], o3: [4.5, 0, 0] } },
+    { progress: 50, atomPositions: { o2: [1.5, 0.5, 0], o3: [3.0, 0.5, 0] } },
+    { progress: 100, atomPositions: { o2: [0.5, 0.5, 0], o3: [2.0, 0.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙醇和O₂', concepts: ['醇羟基'], progress: 0 },
+    { id: 'step2', name: 'O₂接近', description: 'O₂向醇移动', concepts: ['催化剂'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成乙醛', concepts: ['催化氧化'], progress: 100 },
+  ],
+
+  energyProfile: [0, 30, -150],
+}
+
+// 添加缺失的反应：醛→酸催化氧化
+export const ALDEHYDE_TO_ACID: ReactionData = {
+  id: 'aldehyde-to-acid',
+  name: '醛→酸催化氧化',
+  formula: '2CH₃CHO + O₂ → 2CH₃COOH',
+  category: 'oxidation',
+  description: '乙醛氧化为乙酸',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-2, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [-0.5, 1.23, 0] },
+    { id: 'h1', element: 'H', position: [-0.5, -1.0, 0] },
+    { id: 'o2', element: 'O', position: [3, 0, 0] },
+    { id: 'o3', element: 'O', position: [4.5, 0, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'double' },
+    { id: 'c2-h1', atom1Id: 'c2', atom2Id: 'h1', type: 'single' },
+    { id: 'o2-o3', atom1Id: 'o2', atom2Id: 'o3', type: 'double' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { o2: [3, 0, 0], o3: [4.5, 0, 0] } },
+    { progress: 50, atomPositions: { o2: [1.5, 0.5, 0], o3: [2.5, 0.5, 0] } },
+    { progress: 100, atomPositions: { o2: [0.5, 0.5, 0], o3: [1.5, 0.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙醛和O₂', concepts: ['醛基'], progress: 0 },
+    { id: 'step2', name: 'O₂接近', description: 'O₂向醛基移动', concepts: ['氧化剂'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成乙酸', concepts: ['氧化反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 30, -300],
+}
+
+// 添加缺失的反应：使冷稀KMnO₄褪色（烯烃）
+export const ALKENE_KMNO4: ReactionData = {
+  id: 'alkene-kmno4',
+  name: '烯烃使KMnO₄褪色',
+  formula: 'CH₂=CH₂ + KMnO₄ → 褪色',
+  category: 'oxidation',
+  description: '烯烃使酸性高锰酸钾溶液褪色',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.16, 0, 0] },
+    { id: 'h1', element: 'H', position: [-2.04, 0.935, 0] },
+    { id: 'h2', element: 'H', position: [-2.04, -0.935, 0] },
+    { id: 'h3', element: 'H', position: [0.38, 0.935, 0] },
+    { id: 'h4', element: 'H', position: [0.38, -0.935, 0] },
+    { id: 'mn', element: 'Fe', position: [3.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [4.5, 0.8, 0] },
+    { id: 'o2', element: 'O', position: [4.5, -0.8, 0] },
+    { id: 'o3', element: 'O', position: [3.5, 1.5, 0] },
+    { id: 'o4', element: 'O', position: [3.5, -1.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'double' },
+    { id: 'c1-h1', atom1Id: 'c1', atom2Id: 'h1', type: 'single' },
+    { id: 'c1-h2', atom1Id: 'c1', atom2Id: 'h2', type: 'single' },
+    { id: 'c2-h3', atom1Id: 'c2', atom2Id: 'h3', type: 'single' },
+    { id: 'c2-h4', atom1Id: 'c2', atom2Id: 'h4', type: 'single' },
+    { id: 'mn-o1', atom1Id: 'mn', atom2Id: 'o1', type: 'double' },
+    { id: 'mn-o2', atom1Id: 'mn', atom2Id: 'o2', type: 'double' },
+    { id: 'mn-o3', atom1Id: 'mn', atom2Id: 'o3', type: 'single' },
+    { id: 'mn-o4', atom1Id: 'mn', atom2Id: 'o4', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { mn: [3.5, 0, 0], o1: [4.5, 0.8, 0], o2: [4.5, -0.8, 0], o3: [3.5, 1.5, 0], o4: [3.5, -1.5, 0] } },
+    { progress: 50, atomPositions: { mn: [1.5, 0, 0], o1: [2.5, 0.8, 0], o2: [2.5, -0.8, 0], o3: [1.5, 1.5, 0], o4: [1.5, -1.5, 0] } },
+    { progress: 100, atomPositions: { mn: [0.5, 0, 0], o1: [1.5, 0.8, 0], o2: [1.5, -0.8, 0], o3: [0.5, 1.5, 0], o4: [0.5, -1.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '烯烃和KMnO₄', concepts: ['C=C双键', 'MnO₄⁻'], progress: 0 },
+    { id: 'step2', name: 'KMnO₄接近', description: 'MnO₄⁻向烯烃移动', concepts: ['氧化剂'], progress: 50 },
+    { id: 'step3', name: '褪色反应', description: '紫色褪去', concepts: ['氧化反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 20, -50],
+}
+
 // 所有反应数据（扩展到38种）
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   // 取代反应
@@ -1695,6 +1822,9 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'alcohol-oxidation': ALCOHOL_OXIDATION,
   'aldehyde-oxidation': ALDEHYDE_OXIDATION,
   'kmno4-decolorization': KMNO4_DECOLORIZATION,
+  'alcohol-to-aldehyde': ALCOHOL_TO_ALDEHYDE,
+  'aldehyde-to-acid': ALDEHYDE_TO_ACID,
+  'alkene-kmno4': ALKENE_KMNO4,
   
   // 还原反应
   'nitrobenzene-reduction': NITROBENZENE_REDUCTION,

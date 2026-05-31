@@ -63,6 +63,9 @@ const CATEGORIES: ReactionCategory[] = [
       { id: 'alcohol-oxidation', name: '醇→醛氧化', formula: '2C₂H₅OH + O₂ → 2CH₃CHO' },
       { id: 'aldehyde-oxidation', name: '醛→酸氧化', formula: '2CH₃CHO + O₂ → 2CH₃COOH' },
       { id: 'kmno4-decolorization', name: 'KMnO₄褪色', formula: '烯烃 + KMnO₄ → 褪色' },
+      { id: 'alcohol-to-aldehyde', name: '醇→醛催化氧化', formula: '2C₂H₅OH + O₂ → 2CH₃CHO' },
+      { id: 'aldehyde-to-acid', name: '醛→酸催化氧化', formula: '2CH₃CHO + O₂ → 2CH₃COOH' },
+      { id: 'alkene-kmno4', name: '烯烃使KMnO₄褪色', formula: 'CH₂=CH₂ + KMnO₄ → 褪色' },
     ],
   },
   {
