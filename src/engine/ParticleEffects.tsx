@@ -2,53 +2,56 @@ import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
-interface ParticleEffectProps {
-  position: [number, number, number]
-  color?: string
+interface ParticleFieldProps {
   count?: number
   size?: number
+  color?: string
   speed?: number
-  active?: boolean
+  area?: number
 }
 
-// 生成稳定的随机数
+// 稳定的随机数生成
 function stableRandom(seed: number): number {
   const x = Math.sin(seed * 12.9898 + seed * 78.233) * 43758.5453
   return x - Math.floor(x)
 }
 
-export default function ParticleEffect({
-  position,
-  color = '#4facfe',
-  count = 20,
-  size = 0.05,
-  speed = 1,
-  active = true,
-}: ParticleEffectProps) {
+// 背景粒子场
+export function ParticleField({ 
+  count = 200, 
+  size = 0.02, 
+  color = '#4facfe', 
+  speed = 0.5,
+  area = 20 
+}: ParticleFieldProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null!)
   const dummy = useMemo(() => new THREE.Object3D(), [])
   
-  // 使用稳定的随机数生成速度
-  const velocities = useMemo(() => {
+  // 生成粒子位置和速度
+  const particles = useMemo(() => {
     return Array.from({ length: count }, (_, i) => ({
-      x: (stableRandom(i * 3) - 0.5) * speed * 0.1,
-      y: (stableRandom(i * 3 + 1) - 0.5) * speed * 0.1,
-      z: (stableRandom(i * 3 + 2) - 0.5) * speed * 0.1,
+      x: (stableRandom(i * 3) - 0.5) * area,
+      y: (stableRandom(i * 3 + 1) - 0.5) * area,
+      z: (stableRandom(i * 3 + 2) - 0.5) * area,
+      vx: (stableRandom(i * 3 + 3) - 0.5) * speed * 0.01,
+      vy: (stableRandom(i * 3 + 4) - 0.5) * speed * 0.01,
+      vz: (stableRandom(i * 3 + 5) - 0.5) * speed * 0.01,
+      phase: stableRandom(i * 3 + 6) * Math.PI * 2,
     }))
-  }, [count, speed])
+  }, [count, area, speed])
 
   useFrame(() => {
-    if (!meshRef.current || !active) return
+    if (!meshRef.current) return
 
     const time = Date.now() * 0.001
     for (let i = 0; i < count; i++) {
-      const vel = velocities[i]
+      const p = particles[i]
       dummy.position.set(
-        position[0] + vel.x * Math.sin(time + i),
-        position[1] + vel.y * Math.cos(time + i),
-        position[2] + vel.z * Math.sin(time + i * 0.5)
+        p.x + Math.sin(time * 0.3 + p.phase) * 0.5,
+        p.y + Math.cos(time * 0.2 + p.phase) * 0.5,
+        p.z + Math.sin(time * 0.4 + p.phase) * 0.5
       )
-      dummy.scale.setScalar(size * (0.5 + stableRandom(i) * 0.5))
+      dummy.scale.setScalar(size * (0.8 + Math.sin(time + p.phase) * 0.2))
       dummy.updateMatrix()
       meshRef.current.setMatrixAt(i, dummy.matrix)
     }
@@ -57,59 +60,57 @@ export default function ParticleEffect({
 
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[1, 8, 8]} />
+      <sphereGeometry args={[1, 6, 6]} />
       <meshBasicMaterial
         color={color}
         transparent
-        opacity={0.6}
+        opacity={0.4}
         blending={THREE.AdditiveBlending}
+        depthWrite={false}
       />
     </instancedMesh>
   )
 }
 
-// 反应轨迹效果
-interface TrailEffectProps {
-  positions: [number, number, number][]
-  color?: string
-}
-
-export function TrailEffect({ positions, color = '#4facfe' }: TrailEffectProps) {
-  if (positions.length < 2) return null
-
-  return (
-    <line>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          array={new Float32Array(positions.flat())}
-          count={positions.length}
-          itemSize={3}
-          args={[new Float32Array(positions.flat()), 3]}
-        />
-      </bufferGeometry>
-      <lineBasicMaterial color={color} transparent opacity={0.6} />
-    </line>
-  )
-}
-
-// 发光效果
-interface GlowEffectProps {
-  position: [number, number, number]
+// 反应轨迹粒子
+interface TrailParticlesProps {
+  positions: THREE.Vector3[]
   color?: string
   size?: number
-  intensity?: number
 }
 
-export function GlowEffect({ position, color = '#4facfe', size = 0.5, intensity = 0.5 }: GlowEffectProps) {
+export function TrailParticles({ positions, color = '#4facfe', size = 0.03 }: TrailParticlesProps) {
+  const meshRef = useRef<THREE.InstancedMesh>(null!)
+  const dummy = useMemo(() => new THREE.Object3D(), [])
+  
+  const count = positions.length
+
+  useFrame(() => {
+    if (!meshRef.current || count === 0) return
+
+    for (let i = 0; i < count; i++) {
+      const pos = positions[i]
+      dummy.position.copy(pos)
+      dummy.scale.setScalar(size * (1 - i / count))
+      dummy.updateMatrix()
+      meshRef.current.setMatrixAt(i, dummy.matrix)
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true
+  })
+
+  if (count === 0) return null
+
   return (
-    <pointLight
-      position={position}
-      color={color}
-      intensity={intensity}
-      distance={size * 10}
-      decay={2}
-    />
+    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
+      <sphereGeometry args={[1, 6, 6]} />
+      <meshBasicMaterial
+        color={color}
+        transparent
+        opacity={0.6}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </instancedMesh>
   )
 }
 
@@ -121,24 +122,49 @@ interface BondBreakEffectProps {
 }
 
 export function BondBreakEffect({ position, color = '#ff6b4a', active = false }: BondBreakEffectProps) {
+  const meshRef = useRef<THREE.InstancedMesh>(null!)
+  const dummy = useMemo(() => new THREE.Object3D(), [])
+  const count = 12
+
+  const particles = useMemo(() => {
+    return Array.from({ length: count }, (_, i) => ({
+      vx: (stableRandom(i * 3) - 0.5) * 0.1,
+      vy: (stableRandom(i * 3 + 1) - 0.5) * 0.1,
+      vz: (stableRandom(i * 3 + 2) - 0.5) * 0.1,
+      phase: stableRandom(i * 3 + 3) * Math.PI * 2,
+    }))
+  }, [count])
+
+  useFrame(() => {
+    if (!meshRef.current || !active) return
+
+    const time = Date.now() * 0.001
+    for (let i = 0; i < count; i++) {
+      const p = particles[i]
+      dummy.position.set(
+        position[0] + p.vx * Math.sin(time + p.phase) * 10,
+        position[1] + p.vy * Math.cos(time + p.phase) * 10,
+        position[2] + p.vz * Math.sin(time + p.phase) * 10
+      )
+      dummy.scale.setScalar(0.02 * (1 - Math.abs(Math.sin(time + p.phase))))
+      dummy.updateMatrix()
+      meshRef.current.setMatrixAt(i, dummy.matrix)
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true
+  })
+
   if (!active) return null
 
   return (
-    <group position={position}>
-      <ParticleEffect
-        position={[0, 0, 0]}
+    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
+      <sphereGeometry args={[1, 6, 6]} />
+      <meshBasicMaterial
         color={color}
-        count={15}
-        size={0.03}
-        speed={2}
-        active={active}
+        transparent
+        opacity={0.8}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
       />
-      <GlowEffect
-        position={[0, 0, 0]}
-        color={color}
-        size={0.3}
-        intensity={0.8}
-      />
-    </group>
+    </instancedMesh>
   )
 }

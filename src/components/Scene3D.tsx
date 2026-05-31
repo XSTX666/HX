@@ -4,7 +4,7 @@ import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useAppStore } from '../store/appStore'
 import { ALL_REACTIONS } from '../data/reactions'
-import { BondBreakEffect } from '../engine/ParticleEffects'
+import { BondBreakEffect, ParticleField } from '../engine/ParticleEffects'
 import { checkWebGPUSupport } from '../engine/WebGPUDetector'
 
 // 原子颜色和半径
@@ -300,6 +300,9 @@ function SceneContent() {
         <meshStandardMaterial color="#0d0f1a" roughness={0.2} metalness={0.8} />
       </mesh>
 
+      {/* 粒子场效果 */}
+      <ParticleField count={150} size={0.015} color="#4facfe" speed={0.3} area={15} />
+      
       <ReactionScene />
       <Stars />
     </>
