@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from './store/appStore'
 import Scene3D from './components/Scene3D'
@@ -8,13 +8,58 @@ import MechPanel from './components/MechPanel'
 
 export default function App() {
   const [loading, setLoading] = useState(true)
-  const { currentReaction } = useAppStore()
+  const { 
+    currentReaction, 
+    isPlaying, 
+    progress, 
+    setProgress, 
+    speed,
+    setCurrentStage 
+  } = useAppStore()
+  
+  const animRef = useRef<number | null>(null)
+  const lastTimeRef = useRef<number>(0)
 
   useEffect(() => {
-    // 模拟加载
     const timer = setTimeout(() => setLoading(false), 1500)
     return () => clearTimeout(timer)
   }, [])
+
+  // 动画循环
+  useEffect(() => {
+    if (!isPlaying || progress >= 100) {
+      if (animRef.current) {
+        cancelAnimationFrame(animRef.current)
+        animRef.current = null
+      }
+      if (progress >= 100) {
+        useAppStore.getState().setIsPlaying(false)
+      }
+      return
+    }
+
+    const animate = (time: number) => {
+      if (!lastTimeRef.current) lastTimeRef.current = time
+      const delta = time - lastTimeRef.current
+      lastTimeRef.current = time
+
+      const newProgress = Math.min(100, progress + (delta / 1000) * speed * 10)
+      setProgress(newProgress)
+
+      if (newProgress < 100) {
+        animRef.current = requestAnimationFrame(animate)
+      }
+    }
+
+    lastTimeRef.current = 0
+    animRef.current = requestAnimationFrame(animate)
+
+    return () => {
+      if (animRef.current) {
+        cancelAnimationFrame(animRef.current)
+      }
+    }
+  }, [isPlaying, progress, speed, setProgress])
 
   return (
     <>

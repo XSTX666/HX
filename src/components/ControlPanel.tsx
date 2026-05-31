@@ -7,26 +7,16 @@ export default function ControlPanel() {
     speed, setSpeed,
     showLabels, toggleLabels,
     isSpinning, toggleSpin,
+    resetAnimation,
+    nextStage,
+    prevStage,
   } = useAppStore()
 
   const handlePlay = () => {
     if (progress >= 100) {
-      setProgress(0)
+      resetAnimation()
     }
     setIsPlaying(!isPlaying)
-  }
-
-  const handleReset = () => {
-    setProgress(0)
-    setIsPlaying(false)
-  }
-
-  const handlePrev = () => {
-    setProgress(Math.max(0, progress - 20))
-  }
-
-  const handleNext = () => {
-    setProgress(Math.min(100, progress + 20))
   }
 
   return (
@@ -37,12 +27,12 @@ export default function ControlPanel() {
         borderTop: '1px solid rgba(79,172,254,0.15)',
       }}
     >
-      <button className="ctrl-btn" onClick={handlePrev}>⏮</button>
+      <button className="ctrl-btn" onClick={prevStage}>⏮</button>
       <button className="ctrl-btn" onClick={handlePlay}>
         {isPlaying ? '⏸ 暂停' : '▶ 播放'}
       </button>
-      <button className="ctrl-btn" onClick={handleNext}>⏭</button>
-      <button className="ctrl-btn" onClick={handleReset}>↺</button>
+      <button className="ctrl-btn" onClick={nextStage}>⏭</button>
+      <button className="ctrl-btn" onClick={resetAnimation}>↺</button>
 
       <select
         className="px-3 py-1.5 rounded-lg text-sm"
