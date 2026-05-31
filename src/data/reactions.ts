@@ -262,9 +262,8 @@ export const BENZENE_BROMINATION: ReactionData = {
   keyframes: [
     { progress: 0, atomPositions: { br1: [3.5, 0.5, 0], br2: [5.78, 0.5, 0] } },
     { progress: 40, atomPositions: { br1: [2.0, 0.5, 0], br2: [4.28, 0.5, 0] } },
-    { progress: 70, atomPositions: { br1: [1.5, 1.0, 0], br2: [3.0, -0.5, 0] } },
-    { progress: 100, atomPositions: { br1: [1.5, 1.40, 0], br2: [4.0, 2.0, 0] } },
-    bondOpacities: { 'br1-br2': 0 },
+    { progress: 70, atomPositions: { br1: [1.5, 1.0, 0], br2: [3.0, -0.5, 0] }, bondOpacities: { 'br1-br2': 0 } },
+    { progress: 100, atomPositions: { br1: [1.5, 1.40, 0], br2: [4.0, 2.0, 0] }, bondOpacities: { 'br1-br2': 0 } },
   ],
 
   steps: [
