@@ -1602,6 +1602,63 @@ export const PHENOL_SUBSTITUTION: ReactionData = {
   energyProfile: [0, 20, -40],
 }
 
+// 甲苯硝化(TNT)反应数据
+export const TNT_NITRATION: ReactionData = {
+  id: 'tnt-nitration',
+  name: '甲苯硝化(TNT)',
+  formula: 'C₆H₅CH₃ + 3HNO₃ → C₆H₂(CH₃)(NO₂)₃ + 3H₂O',
+  category: 'substitution',
+  description: '甲苯与浓硝酸发生三步硝化反应生成TNT',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 'c_methyl', element: 'C', position: [0, -2.5, 0] },
+    { id: 'n1', element: 'N', position: [3.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [4.5, 0.8, 0] },
+    { id: 'o2', element: 'O', position: [4.5, -0.8, 0] },
+    { id: 'n2', element: 'N', position: [-3.5, 0, 0] },
+    { id: 'o3', element: 'O', position: [-4.5, 0.8, 0] },
+    { id: 'o4', element: 'O', position: [-4.5, -0.8, 0] },
+    { id: 'n3', element: 'N', position: [0, 3.5, 0] },
+    { id: 'o5', element: 'O', position: [0.8, 4.5, 0] },
+    { id: 'o6', element: 'O', position: [-0.8, 4.5, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'rc3-c_methyl', atom1Id: 'rc3', atom2Id: 'c_methyl', type: 'single' },
+    { id: 'n1-o1', atom1Id: 'n1', atom2Id: 'o1', type: 'double' },
+    { id: 'n1-o2', atom1Id: 'n1', atom2Id: 'o2', type: 'single' },
+    { id: 'n2-o3', atom1Id: 'n2', atom2Id: 'o3', type: 'double' },
+    { id: 'n2-o4', atom1Id: 'n2', atom2Id: 'o4', type: 'single' },
+    { id: 'n3-o5', atom1Id: 'n3', atom2Id: 'o5', type: 'double' },
+    { id: 'n3-o6', atom1Id: 'n3', atom2Id: 'o6', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { n1: [3.5, 0, 0], o1: [4.5, 0.8, 0], o2: [4.5, -0.8, 0], n2: [-3.5, 0, 0], o3: [-4.5, 0.8, 0], o4: [-4.5, -0.8, 0], n3: [0, 3.5, 0], o5: [0.8, 4.5, 0], o6: [-0.8, 4.5, 0] } },
+    { progress: 33, atomPositions: { n1: [1.5, 0, 0], o1: [2.5, 0.8, 0], o2: [2.5, -0.8, 0], n2: [-3.5, 0, 0], o3: [-4.5, 0.8, 0], o4: [-4.5, -0.8, 0], n3: [0, 3.5, 0], o5: [0.8, 4.5, 0], o6: [-0.8, 4.5, 0] } },
+    { progress: 66, atomPositions: { n1: [1.5, 0, 0], o1: [2.5, 0.8, 0], o2: [2.5, -0.8, 0], n2: [-1.5, 0, 0], o3: [-2.5, 0.8, 0], o4: [-2.5, -0.8, 0], n3: [0, 3.5, 0], o5: [0.8, 4.5, 0], o6: [-0.8, 4.5, 0] } },
+    { progress: 100, atomPositions: { n1: [1.5, 0, 0], o1: [2.5, 0.8, 0], o2: [2.5, -0.8, 0], n2: [-1.5, 0, 0], o3: [-2.5, 0.8, 0], o4: [-2.5, -0.8, 0], n3: [0, 1.5, 0], o5: [0.8, 2.5, 0], o6: [-0.8, 2.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '甲苯和3HNO₃', concepts: ['甲苯', '浓硝酸'], progress: 0 },
+    { id: 'step2', name: '第一次硝化', description: '生成一硝基甲苯', concepts: ['亲电取代'], progress: 33 },
+    { id: 'step3', name: '第二次硝化', description: '生成二硝基甲苯', concepts: ['亲电取代'], progress: 66 },
+    { id: 'step4', name: '第三次硝化', description: '生成TNT', concepts: ['三硝基甲苯'], progress: 100 },
+  ],
+
+  energyProfile: [0, 30, 40, 50, -150],
+}
+
 // 所有反应数据（扩展到38种）
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   // 取代反应
@@ -1617,6 +1674,7 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'dehydration-ether': DEHYDRATION_ETHER,
   'sidechain-halogenation': SIDECHAIN_HALOGENATION,
   'phenol-substitution': PHENOL_SUBSTITUTION,
+  'tnt-nitration': TNT_NITRATION,
   
   // 加成反应
   'hydrogenation': HYDROGENATION,

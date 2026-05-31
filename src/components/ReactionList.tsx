@@ -27,6 +27,7 @@ const CATEGORIES: ReactionCategory[] = [
       { id: 'dehydration-ether', name: '分子间脱水', formula: '2C₂H₅OH → 乙醚 + H₂O' },
       { id: 'sidechain-halogenation', name: '侧链卤代', formula: 'C₆H₅CH₃ + Cl₂ → C₆H₅CH₂Cl' },
       { id: 'phenol-substitution', name: '酚的取代', formula: 'C₆H₅OH + Br₂ → 三溴苯酚' },
+      { id: 'tnt-nitration', name: '甲苯硝化(TNT)', formula: 'C₆H₅CH₃ + 3HNO₃ → TNT' },
     ],
   },
   {
