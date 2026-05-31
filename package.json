@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:wasm": "bash scripts/build-wasm.sh",
+    "build:all": "pnpm run build:wasm && pnpm run build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
