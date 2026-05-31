@@ -21,6 +21,7 @@ const CATEGORIES: ReactionCategory[] = [
       { id: 'benzene-sulfonation', name: '苯的磺化', formula: 'C₆H₆ + H₂SO₄ → C₆H₅SO₃H + H₂O' },
       { id: 'esterification', name: '酯化反应', formula: 'CH₃COOH + C₂H₅OH → 酯 + H₂O' },
       { id: 'haloalkane-hydrolysis', name: '卤代烃水解', formula: 'C₂H₅Br + NaOH → C₂H₅OH' },
+      { id: 'phenol-bromine', name: '苯酚+溴水', formula: 'C₆H₅OH + 3Br₂ → 沉淀' },
     ],
   },
   {
@@ -77,6 +78,7 @@ const CATEGORIES: ReactionCategory[] = [
     color: '#ffd93d',
     items: [
       { id: 'phenol-fecl3', name: '苯酚+FeCl₃', formula: 'C₆H₅OH + FeCl₃ → 紫色' },
+      { id: 'acetic-naoh', name: '乙酸+NaOH', formula: 'CH₃COOH + NaOH → 醋酸钠' },
     ],
   },
 ]

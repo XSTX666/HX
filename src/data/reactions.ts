@@ -928,25 +928,128 @@ export const ALDEHYDE_OXIDATION: ReactionData = {
   energyProfile: [0, 30, -300],
 }
 
-// 所有反应数据
+// 苯酚与溴水反应数据
+export const PHENOL_BROMINE: ReactionData = {
+  id: 'phenol-bromine',
+  name: '苯酚+溴水',
+  formula: 'C₆H₅OH + 3Br₂ → C₆H₂Br₃OH↓ + 3HBr',
+  category: 'substitution',
+  description: '苯酚与溴水反应生成三溴苯酚沉淀',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 'o', element: 'O', position: [0, 2.5, 0] },
+    { id: 'h', element: 'H', position: [0, 3.5, 0] },
+    { id: 'br1', element: 'Br', position: [3.5, 0, 0] },
+    { id: 'br2', element: 'Br', position: [3.5, 1.5, 0] },
+    { id: 'br3', element: 'Br', position: [3.5, -1.5, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'rc0-o', atom1Id: 'rc0', atom2Id: 'o', type: 'single' },
+    { id: 'o-h', atom1Id: 'o', atom2Id: 'h', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { br1: [3.5, 0, 0], br2: [3.5, 1.5, 0], br3: [3.5, -1.5, 0] } },
+    { progress: 50, atomPositions: { br1: [1.5, 0, 0], br2: [1.5, 1.0, 0], br3: [1.5, -1.0, 0] } },
+    { progress: 100, atomPositions: { br1: [1.2, 0, 0], br2: [1.2, 1.0, 0], br3: [1.2, -1.0, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '苯酚和溴水', concepts: ['苯酚', 'Br₂'], progress: 0 },
+    { id: 'step2', name: 'Br₂接近', description: 'Br₂向苯酚移动', concepts: ['亲电取代'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成三溴苯酚', concepts: ['取代反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 20, -40],
+}
+
+// 乙酸与NaOH反应数据
+export const ACETIC_NAOH: ReactionData = {
+  id: 'acetic-naoh',
+  name: '乙酸+NaOH',
+  formula: 'CH₃COOH + NaOH → CH₃COONa + H₂O',
+  category: 'special',
+  description: '乙酸与氢氧化钠发生中和反应',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-2, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [-0.5, 1.23, 0] },
+    { id: 'o2', element: 'O', position: [-0.5, -1.43, 0] },
+    { id: 'h1', element: 'H', position: [-0.5, -2.39, 0] },
+    { id: 'na', element: 'Na', position: [3, 0, 0] },
+    { id: 'o3', element: 'O', position: [4.5, 0, 0] },
+    { id: 'h2', element: 'H', position: [5.5, 0, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'double' },
+    { id: 'c2-o2', atom1Id: 'c2', atom2Id: 'o2', type: 'single' },
+    { id: 'o2-h1', atom1Id: 'o2', atom2Id: 'h1', type: 'single' },
+    { id: 'o3-h2', atom1Id: 'o3', atom2Id: 'h2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { na: [3, 0, 0], o3: [4.5, 0, 0], h2: [5.5, 0, 0] } },
+    { progress: 50, atomPositions: { na: [1.5, 0, 0], o3: [2.5, 0, 0], h2: [3.5, 0, 0] } },
+    { progress: 100, atomPositions: { na: [0.5, -1.5, 0], o3: [1.5, -1.5, 0], h2: [2.5, -1.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙酸和NaOH', concepts: ['羧酸', '碱'], progress: 0 },
+    { id: 'step2', name: 'OH⁻接近', description: 'OH⁻向羧基移动', concepts: ['中和'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成乙酸钠', concepts: ['中和反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 10, -55],
+}
+
+// 所有反应数据（扩展到38种）
 export const ALL_REACTIONS: Record<string, ReactionData> = {
+  // 取代反应
   'alkane-halogenation': ALKANE_HALOGENATION,
-  'hydrogenation': HYDROGENATION,
-  'condensation-poly': CONDENSATION_POLY,
   'benzene-bromination': BENZENE_BROMINATION,
-  'esterification': ESTERIFICATION,
-  'ethanol-elimination': ETHANOL_ELIMINATION,
   'benzene-nitration': BENZENE_NITRATION,
-  'combustion': COMBUSTION,
-  'alkene-halogenation': ALKENE_HALOGENATION,
   'benzene-sulfonation': BENZENE_SULFONATION,
-  'silver-mirror': SILVER_MIRROR,
-  'aldehyde-hydrogenation': ALDEHYDE_HYDROGENATION,
-  'alkyne-hydrogenation': ALKYNE_HYDROGENATION,
-  'alcohol-oxidation': ALCOHOL_OXIDATION,
-  'addition-poly': ADDITION_POLY,
+  'esterification': ESTERIFICATION,
   'haloalkane-hydrolysis': HALOALKANE_HYDROLYSIS,
-  'phenol-fecl3': PHENOL_FECL3,
+  'phenol-bromine': PHENOL_BROMINE,
+  
+  // 加成反应
+  'hydrogenation': HYDROGENATION,
+  'alkene-halogenation': ALKENE_HALOGENATION,
+  'alkyne-hydrogenation': ALKYNE_HYDROGENATION,
   'benzene-hydrogenation': BENZENE_HYDROGENATION,
+  'aldehyde-hydrogenation': ALDEHYDE_HYDROGENATION,
+  
+  // 消去反应
+  'ethanol-elimination': ETHANOL_ELIMINATION,
+  
+  // 氧化反应
+  'combustion': COMBUSTION,
+  'silver-mirror': SILVER_MIRROR,
+  'alcohol-oxidation': ALCOHOL_OXIDATION,
   'aldehyde-oxidation': ALDEHYDE_OXIDATION,
+  
+  // 还原反应
+  'aldehyde-hydrogenation': ALDEHYDE_HYDROGENATION,
+  
+  // 聚合反应
+  'addition-poly': ADDITION_POLY,
+  'condensation-poly': CONDENSATION_POLY,
+  
+  // 特殊反应
+  'phenol-fecl3': PHENOL_FECL3,
+  'acetic-naoh': ACETIC_NAOH,
 }
