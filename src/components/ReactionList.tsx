@@ -29,6 +29,7 @@ const CATEGORIES: ReactionCategory[] = [
     items: [
       { id: 'hydrogenation', name: '烯烃加氢', formula: 'CH₂=CH₂ + H₂ → CH₃CH₃' },
       { id: 'alkene-halogenation', name: '烯烃加卤素', formula: 'CH₂=CH₂ + Br₂ → CH₂BrCH₂Br' },
+      { id: 'alkyne-hydrogenation', name: '炔烃加氢', formula: 'HC≡CH + 2H₂ → CH₃CH₃' },
       { id: 'aldehyde-hydrogenation', name: '醛酮加氢', formula: 'CH₃CHO + H₂ → CH₃CH₂OH' },
     ],
   },
@@ -47,6 +48,7 @@ const CATEGORIES: ReactionCategory[] = [
     items: [
       { id: 'combustion', name: '燃烧', formula: 'CH₄ + 2O₂ → CO₂ + 2H₂O' },
       { id: 'silver-mirror', name: '银镜反应', formula: 'CH₃CHO + Ag⁺ → 银镜' },
+      { id: 'alcohol-oxidation', name: '醇→醛氧化', formula: '2C₂H₅OH + O₂ → 2CH₃CHO' },
     ],
   },
   {
@@ -62,6 +64,7 @@ const CATEGORIES: ReactionCategory[] = [
     title: '聚合反应',
     color: '#ff6b6b',
     items: [
+      { id: 'addition-poly', name: '加聚反应', formula: 'n CH₂=CH₂ → 聚乙烯' },
       { id: 'condensation-poly', name: '缩聚反应', formula: '乙二醇 + 对苯二甲酸 → 涤纶' },
     ],
   },

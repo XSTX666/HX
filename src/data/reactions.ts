@@ -632,6 +632,135 @@ export const ALDEHYDE_HYDROGENATION: ReactionData = {
   energyProfile: [0, 30, -70],
 }
 
+// 炔烃加氢反应数据
+export const ALKYNE_HYDROGENATION: ReactionData = {
+  id: 'alkyne-hydrogenation',
+  name: '炔烃加氢',
+  formula: 'HC≡CH + 2H₂ → CH₃CH₃',
+  category: 'addition',
+  description: '乙炔与氢气发生加成反应',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'c2', element: 'C', position: [1.5, 0, 0] },
+    { id: 'h1', element: 'H', position: [-2.5, 0, 0] },
+    { id: 'h2', element: 'H', position: [2.5, 0, 0] },
+    { id: 'h3', element: 'H', position: [-3.5, 0.5, 0] },
+    { id: 'h4', element: 'H', position: [-3.5, -0.5, 0] },
+    { id: 'h5', element: 'H', position: [3.5, 0.5, 0] },
+    { id: 'h6', element: 'H', position: [3.5, -0.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'triple' },
+    { id: 'c1-h1', atom1Id: 'c1', atom2Id: 'h1', type: 'single' },
+    { id: 'c2-h2', atom1Id: 'c2', atom2Id: 'h2', type: 'single' },
+    { id: 'h3-h4', atom1Id: 'h3', atom2Id: 'h4', type: 'single' },
+    { id: 'h5-h6', atom1Id: 'h5', atom2Id: 'h6', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { h3: [-3.5, 0.5, 0], h4: [-3.5, -0.5, 0], h5: [3.5, 0.5, 0], h6: [3.5, -0.5, 0] } },
+    { progress: 30, atomPositions: { h3: [-2.5, 0.5, 0], h4: [-2.5, -0.5, 0], h5: [2.5, 0.5, 0], h6: [2.5, -0.5, 0] } },
+    { progress: 60, atomPositions: { h3: [-1.8, 0.3, 0], h4: [-1.8, -0.3, 0], h5: [1.8, 0.3, 0], h6: [1.8, -0.3, 0] }, bondOpacities: { 'h3-h4': 0, 'h5-h6': 0 } },
+    { progress: 100, atomPositions: { h3: [-1.5, 0.5, 0], h4: [-1.5, -0.5, 0], h5: [1.5, 0.5, 0], h6: [1.5, -0.5, 0] }, bondOpacities: { 'c1-c2': 0.5 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙炔和H₂', concepts: ['C≡C三键'], progress: 0 },
+    { id: 'step2', name: 'H₂接近', description: 'H₂向三键移动', concepts: ['催化剂'], progress: 30 },
+    { id: 'step3', name: '第一次加成', description: '三键变双键', concepts: ['加成'], progress: 60 },
+    { id: 'step4', name: '第二次加成', description: '双键变单键', concepts: ['加成'], progress: 100 },
+  ],
+
+  energyProfile: [0, 20, 30, -200],
+}
+
+// 醇→醛催化氧化数据
+export const ALCOHOL_OXIDATION: ReactionData = {
+  id: 'alcohol-oxidation',
+  name: '醇→醛催化氧化',
+  formula: '2C₂H₅OH + O₂ → 2CH₃CHO + 2H₂O',
+  category: 'oxidation',
+  description: '乙醇在铜催化下氧化为乙醛',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-2, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [-0.5, 1.43, 0] },
+    { id: 'h1', element: 'H', position: [-0.5, 2.39, 0] },
+    { id: 'o2', element: 'O', position: [3, 0, 0] },
+    { id: 'o3', element: 'O', position: [4.5, 0, 0] },
+    { id: 'cu', element: 'Fe', position: [1.5, -1.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'single' },
+    { id: 'o1-h1', atom1Id: 'o1', atom2Id: 'h1', type: 'single' },
+    { id: 'o2-o3', atom1Id: 'o2', atom2Id: 'o3', type: 'double' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { o2: [3, 0, 0], o3: [4.5, 0, 0] } },
+    { progress: 40, atomPositions: { o2: [1.5, 0.5, 0], o3: [3.0, 0.5, 0] } },
+    { progress: 70, atomPositions: { o2: [0.5, 0.5, 0], o3: [2.0, 0.5, 0] }, bondOpacities: { 'o2-o3': 0, 'c2-o1': 0, 'o1-h1': 0 } },
+    { progress: 100, atomPositions: { o2: [0.5, 0.5, 0], o3: [2.0, 0.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙醇和O₂', concepts: ['醇羟基'], progress: 0 },
+    { id: 'step2', name: 'O₂接近', description: 'O₂向醇移动', concepts: ['催化剂'], progress: 40 },
+    { id: 'step3', name: '氧化反应', description: '醇氧化为醛', concepts: ['催化氧化'], progress: 70 },
+    { id: 'step4', name: '产物生成', description: '生成乙醛', concepts: ['氧化反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 30, 50, -150],
+}
+
+// 加聚反应数据
+export const ADDITION_POLY: ReactionData = {
+  id: 'addition-poly',
+  name: '加聚反应',
+  formula: 'n CH₂=CH₂ → [-CH₂-CH₂-]n',
+  category: 'polymerization',
+  description: '乙烯发生加聚反应生成聚乙烯',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'c2', element: 'C', position: [0, 0, 0] },
+    { id: 'h1', element: 'H', position: [-2.04, 0.935, 0] },
+    { id: 'h2', element: 'H', position: [-2.04, -0.935, 0] },
+    { id: 'h3', element: 'H', position: [0.38, 0.935, 0] },
+    { id: 'h4', element: 'H', position: [0.38, -0.935, 0] },
+    { id: 'c3', element: 'C', position: [3, 0, 0] },
+    { id: 'c4', element: 'C', position: [4.5, 0, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'double' },
+    { id: 'c1-h1', atom1Id: 'c1', atom2Id: 'h1', type: 'single' },
+    { id: 'c1-h2', atom1Id: 'c1', atom2Id: 'h2', type: 'single' },
+    { id: 'c2-h3', atom1Id: 'c2', atom2Id: 'h3', type: 'single' },
+    { id: 'c2-h4', atom1Id: 'c2', atom2Id: 'h4', type: 'single' },
+    { id: 'c3-c4', atom1Id: 'c3', atom2Id: 'c4', type: 'double' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { c3: [3, 0, 0], c4: [4.5, 0, 0] } },
+    { progress: 50, atomPositions: { c3: [1.5, 0, 0], c4: [3.0, 0, 0] } },
+    { progress: 100, atomPositions: { c3: [0.5, 0, 0], c4: [2.0, 0, 0] }, bondOpacities: { 'c1-c2': 0.5, 'c3-c4': 0.5 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '单体就位', description: '乙烯分子', concepts: ['C=C双键'], progress: 0 },
+    { id: 'step2', name: '双键打开', description: 'π键断裂', concepts: ['引发'], progress: 50 },
+    { id: 'step3', name: '链增长', description: '形成高分子', concepts: ['加聚'], progress: 100 },
+  ],
+
+  energyProfile: [0, 30, -100],
+}
+
 // 所有反应数据
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   'alkane-halogenation': ALKANE_HALOGENATION,
@@ -646,4 +775,7 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'benzene-sulfonation': BENZENE_SULFONATION,
   'silver-mirror': SILVER_MIRROR,
   'aldehyde-hydrogenation': ALDEHYDE_HYDROGENATION,
+  'alkyne-hydrogenation': ALKYNE_HYDROGENATION,
+  'alcohol-oxidation': ALCOHOL_OXIDATION,
+  'addition-poly': ADDITION_POLY,
 }
