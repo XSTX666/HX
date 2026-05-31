@@ -114,24 +114,31 @@ export function TrailParticles({ positions, color = '#4facfe', size = 0.03 }: Tr
   )
 }
 
-// 键断裂效果
+// 键断裂效果（改进版）
 interface BondBreakEffectProps {
   position: [number, number, number]
   color?: string
   active?: boolean
+  intensity?: number
 }
 
-export function BondBreakEffect({ position, color = '#ff6b4a', active = false }: BondBreakEffectProps) {
+export function BondBreakEffect({ 
+  position, 
+  color = '#ff6b4a', 
+  active = false,
+  intensity = 1 
+}: BondBreakEffectProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null!)
   const dummy = useMemo(() => new THREE.Object3D(), [])
-  const count = 12
+  const count = 16
 
   const particles = useMemo(() => {
     return Array.from({ length: count }, (_, i) => ({
-      vx: (stableRandom(i * 3) - 0.5) * 0.1,
-      vy: (stableRandom(i * 3 + 1) - 0.5) * 0.1,
-      vz: (stableRandom(i * 3 + 2) - 0.5) * 0.1,
+      vx: (stableRandom(i * 3) - 0.5) * 0.15,
+      vy: (stableRandom(i * 3 + 1) - 0.5) * 0.15,
+      vz: (stableRandom(i * 3 + 2) - 0.5) * 0.15,
       phase: stableRandom(i * 3 + 3) * Math.PI * 2,
+      speed: 0.5 + stableRandom(i * 3 + 4) * 0.5,
     }))
   }, [count])
 
@@ -141,12 +148,17 @@ export function BondBreakEffect({ position, color = '#ff6b4a', active = false }:
     const time = Date.now() * 0.001
     for (let i = 0; i < count; i++) {
       const p = particles[i]
+      const t = (time * p.speed + p.phase) % (Math.PI * 2)
+      const radius = 0.3 + Math.sin(t * 2) * 0.2
+      
       dummy.position.set(
-        position[0] + p.vx * Math.sin(time + p.phase) * 10,
-        position[1] + p.vy * Math.cos(time + p.phase) * 10,
-        position[2] + p.vz * Math.sin(time + p.phase) * 10
+        position[0] + p.vx * Math.sin(t) * radius * intensity,
+        position[1] + p.vy * Math.cos(t) * radius * intensity,
+        position[2] + p.vz * Math.sin(t * 0.7) * radius * intensity
       )
-      dummy.scale.setScalar(0.02 * (1 - Math.abs(Math.sin(time + p.phase))))
+      
+      const scale = 0.02 * (0.5 + Math.sin(t * 3) * 0.5) * intensity
+      dummy.scale.setScalar(scale)
       dummy.updateMatrix()
       meshRef.current.setMatrixAt(i, dummy.matrix)
     }
@@ -161,7 +173,7 @@ export function BondBreakEffect({ position, color = '#ff6b4a', active = false }:
       <meshBasicMaterial
         color={color}
         transparent
-        opacity={0.8}
+        opacity={0.9}
         blending={THREE.AdditiveBlending}
         depthWrite={false}
       />
