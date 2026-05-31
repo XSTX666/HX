@@ -4,39 +4,196 @@ import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useAppStore } from '../store/appStore'
 import { ALL_REACTIONS } from '../data/reactions'
-import { Atom, Bond } from './MoleculeRenderer'
+import { AtomData, BondData } from '../data/types'
 
-// 星星背景
-function Stars() {
-  const starsRef = useRef<THREE.Points>(null!)
+// 原子颜色和半径（常量，避免重复创建）
+const ATOM_COLORS: Record<string, string> = {
+  C: '#555555', H: '#f0f0f0', O: '#e83030', N: '#3050F8',
+  Cl: '#1FF01F', Br: '#8B1A1A', S: '#FFFF30', Fe: '#E06633',
+}
 
-  useEffect(() => {
-    const geometry = new THREE.BufferGeometry()
-    const positions = new Float32Array(800 * 3)
-    for (let i = 0; i < 800 * 3; i += 3) {
-      positions[i] = (Math.random() - 0.5) * 40
-      positions[i + 1] = Math.random() * 20 + 2
-      positions[i + 2] = (Math.random() - 0.5) * 30
-    }
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    starsRef.current.geometry = geometry
-  }, [])
+const ATOM_RADII: Record<string, number> = {
+  C: 0.30, H: 0.15, O: 0.28, N: 0.27, Cl: 0.35, Br: 0.38, S: 0.32, Fe: 0.35,
+}
+
+// 缓存几何体和材质
+const geometryCache = new Map<string, THREE.SphereGeometry>()
+const materialCache = new Map<string, THREE.MeshStandardMaterial>()
+
+function getCachedSphereGeometry(radius: number): THREE.SphereGeometry {
+  const key = radius.toFixed(2)
+  if (!geometryCache.has(key)) {
+    geometryCache.set(key, new THREE.SphereGeometry(radius, 32, 16))
+  }
+  return geometryCache.get(key)!
+}
+
+function getCachedMaterial(color: string, opacity: number = 1): THREE.MeshStandardMaterial {
+  const key = `${color}_${opacity}`
+  if (!materialCache.has(key)) {
+    materialCache.set(key, new THREE.MeshStandardMaterial({
+      color,
+      roughness: 0.28,
+      metalness: 0.05,
+      transparent: opacity < 1,
+      opacity,
+    }))
+  }
+  return materialCache.get(key)!
+}
+
+// 优化的原子组件
+function Atom({ position, element, opacity = 1 }: { 
+  position: [number, number, number], 
+  element: string,
+  opacity?: number
+}) {
+  const radius = ATOM_RADII[element] || 0.3
+  const color = ATOM_COLORS[element] || '#888888'
+  const geometry = useMemo(() => getCachedSphereGeometry(radius), [radius])
+  const material = useMemo(() => getCachedMaterial(color, opacity), [color, opacity])
 
   return (
-    <points ref={starsRef}>
-      <bufferGeometry />
-      <pointsMaterial color="#6688bb" size={0.035} transparent opacity={0.7} />
-    </points>
+    <mesh position={position} geometry={geometry} material={material} castShadow />
   )
 }
 
-// 数据驱动的反应场景
+// 优化的化学键组件
+function Bond({ start, end, type = 'single', opacity = 1 }: {
+  start: [number, number, number]
+  end: [number, number, number]
+  type?: 'single' | 'double' | 'triple'
+  opacity?: number
+}) {
+  const { position, quaternion, length } = useMemo(() => {
+    const startVec = new THREE.Vector3(...start)
+    const endVec = new THREE.Vector3(...end)
+    const direction = new THREE.Vector3().subVectors(endVec, startVec)
+    const len = direction.length()
+    const center = new THREE.Vector3().addVectors(startVec, endVec).multiplyScalar(0.5)
+    const quat = new THREE.Quaternion()
+    quat.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize())
+    return { position: center, quaternion: quat, length: len }
+  }, [start, end])
+
+  const radius = type === 'double' ? 0.06 : type === 'triple' ? 0.05 : 0.08
+
+  return (
+    <mesh position={position} quaternion={quaternion} castShadow>
+      <cylinderGeometry args={[radius, radius, length, 8]} />
+      <meshStandardMaterial 
+        color="#888888" 
+        roughness={0.3} 
+        metalness={0.1}
+        transparent
+        opacity={opacity}
+      />
+    </mesh>
+  )
+}
+
+// 星星背景（使用instancedMesh优化）
+function Stars() {
+  const meshRef = useRef<THREE.InstancedMesh>(null!)
+
+  useEffect(() => {
+    const count = 500
+    const dummy = new THREE.Object3D()
+    for (let i = 0; i < count; i++) {
+      dummy.position.set(
+        (Math.random() - 0.5) * 40,
+        Math.random() * 20 + 2,
+        (Math.random() - 0.5) * 30
+      )
+      dummy.updateMatrix()
+      meshRef.current.setMatrixAt(i, dummy.matrix)
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true
+  }, [])
+
+  return (
+    <instancedMesh ref={meshRef} args={[undefined, undefined, 500]}>
+      <sphereGeometry args={[0.035, 4, 4]} />
+      <meshBasicMaterial color="#6688bb" transparent opacity={0.7} />
+    </instancedMesh>
+  )
+}
+
+// 数据驱动的反应场景（优化版）
 function ReactionScene() {
   const { currentReaction, progress } = useAppStore()
   const reaction = currentReaction ? ALL_REACTIONS[currentReaction] : null
 
+  // 缓存原子位置计算
+  const currentAtoms = useMemo(() => {
+    if (!reaction) return []
+
+    const keyframes = reaction.keyframes
+    let currentKf = keyframes[0]
+    let nextKf = keyframes[0]
+    let localProgress = 0
+
+    for (let i = 0; i < keyframes.length - 1; i++) {
+      if (progress >= keyframes[i].progress && progress < keyframes[i + 1].progress) {
+        currentKf = keyframes[i]
+        nextKf = keyframes[i + 1]
+        localProgress = (progress - currentKf.progress) / (nextKf.progress - currentKf.progress)
+        break
+      }
+    }
+
+    return reaction.atoms.map(atom => {
+      const currentPos = currentKf.atomPositions[atom.id] || atom.position
+      const nextPos = nextKf.atomPositions[atom.id] || currentPos
+
+      return {
+        ...atom,
+        position: [
+          currentPos[0] + (nextPos[0] - currentPos[0]) * localProgress,
+          currentPos[1] + (nextPos[1] - currentPos[1]) * localProgress,
+          currentPos[2] + (nextPos[2] - currentPos[2]) * localProgress,
+        ] as [number, number, number],
+      }
+    })
+  }, [reaction, progress])
+
+  // 缓存键的透明度计算
+  const currentBonds = useMemo(() => {
+    if (!reaction) return []
+
+    const keyframes = reaction.keyframes
+    let currentKf = keyframes[0]
+    let nextKf = keyframes[0]
+    let localProgress = 0
+
+    for (let i = 0; i < keyframes.length - 1; i++) {
+      if (progress >= keyframes[i].progress && progress < keyframes[i + 1].progress) {
+        currentKf = keyframes[i]
+        nextKf = keyframes[i + 1]
+        localProgress = (progress - currentKf.progress) / (nextKf.progress - currentKf.progress)
+        break
+      }
+    }
+
+    return reaction.bonds.map(bond => {
+      let opacity = 1
+      if (currentKf.bondOpacities && currentKf.bondOpacities[bond.id] !== undefined) {
+        const currentOpacity = currentKf.bondOpacities[bond.id]
+        const nextOpacity = nextKf.bondOpacities?.[bond.id] ?? currentOpacity
+        opacity = currentOpacity + (nextOpacity - currentOpacity) * localProgress
+      }
+      return { ...bond, opacity }
+    })
+  }, [reaction, progress])
+
+  // 创建原子位置映射
+  const atomPositions = useMemo(() => {
+    const map = new Map<string, [number, number, number]>()
+    currentAtoms.forEach(atom => map.set(atom.id, atom.position))
+    return map
+  }, [currentAtoms])
+
   if (!reaction) {
-    // 默认显示水分子
     return (
       <group>
         <Atom position={[0, 0, 0]} element="O" />
@@ -47,57 +204,6 @@ function ReactionScene() {
       </group>
     )
   }
-
-  // 找到当前应该显示的关键帧
-  const keyframes = reaction.keyframes
-  let currentKf = keyframes[0]
-  let nextKf = keyframes[0]
-  let localProgress = 0
-
-  for (let i = 0; i < keyframes.length - 1; i++) {
-    if (progress >= keyframes[i].progress && progress < keyframes[i + 1].progress) {
-      currentKf = keyframes[i]
-      nextKf = keyframes[i + 1]
-      localProgress = (progress - currentKf.progress) / (nextKf.progress - currentKf.progress)
-      break
-    }
-  }
-
-  // 计算当前位置
-  const currentAtoms = reaction.atoms.map(atom => {
-    const currentPos = currentKf.atomPositions[atom.id] || atom.position
-    const nextPos = nextKf.atomPositions[atom.id] || currentPos
-
-    return {
-      ...atom,
-      position: [
-        currentPos[0] + (nextPos[0] - currentPos[0]) * localProgress,
-        currentPos[1] + (nextPos[1] - currentPos[1]) * localProgress,
-        currentPos[2] + (nextPos[2] - currentPos[2]) * localProgress,
-      ] as [number, number, number],
-    }
-  })
-
-  // 计算键的透明度
-  const currentBonds = reaction.bonds.map(bond => {
-    let opacity = 1
-    
-    // 检查关键帧中的透明度设置
-    if (currentKf.bondOpacities && currentKf.bondOpacities[bond.id] !== undefined) {
-      const currentOpacity = currentKf.bondOpacities[bond.id]
-      const nextOpacity = nextKf.bondOpacities?.[bond.id] ?? currentOpacity
-      opacity = currentOpacity + (nextOpacity - currentOpacity) * localProgress
-    }
-
-    return { ...bond, opacity }
-  })
-
-  // 创建原子位置映射
-  const atomPositions = useMemo(() => {
-    const map = new Map<string, [number, number, number]>()
-    currentAtoms.forEach(atom => map.set(atom.id, atom.position))
-    return map
-  }, [currentAtoms])
 
   return (
     <group>
@@ -136,7 +242,7 @@ function SceneContent() {
         position={[6, 10, 6]}
         intensity={5}
         castShadow
-        shadow-mapSize={[2048, 2048]}
+        shadow-mapSize={[1024, 1024]}
       />
       <directionalLight position={[-4, 2, -3]} intensity={2.5} color="#8899cc" />
       <directionalLight position={[-3, 4, -6]} intensity={3} color="#ffcc88" />
@@ -169,8 +275,14 @@ export default function Scene3D() {
     <Canvas
       camera={{ position: [8, 5, 10], fov: 60 }}
       shadows
-      gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.3 }}
+      gl={{ 
+        antialias: true, 
+        toneMapping: THREE.ACESFilmicToneMapping, 
+        toneMappingExposure: 1.3,
+        powerPreference: 'high-performance',
+      }}
       style={{ background: '#1a1a2e' }}
+      frameloop="demand"
     >
       <SceneContent />
     </Canvas>
