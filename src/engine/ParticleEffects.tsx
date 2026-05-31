@@ -2,14 +2,6 @@ import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
-interface ParticleFieldProps {
-  count?: number
-  size?: number
-  color?: string
-  speed?: number
-  area?: number
-}
-
 // 稳定的随机数生成
 function stableRandom(seed: number): number {
   const x = Math.sin(seed * 12.9898 + seed * 78.233) * 43758.5453
@@ -17,28 +9,30 @@ function stableRandom(seed: number): number {
 }
 
 // 背景粒子场
+interface ParticleFieldProps {
+  count?: number
+  size?: number
+  color?: string
+  area?: number
+}
+
 export function ParticleField({ 
   count = 200, 
   size = 0.02, 
   color = '#4facfe', 
-  speed = 0.5,
   area = 20 
 }: ParticleFieldProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null!)
   const dummy = useMemo(() => new THREE.Object3D(), [])
   
-  // 生成粒子位置和速度
   const particles = useMemo(() => {
     return Array.from({ length: count }, (_, i) => ({
       x: (stableRandom(i * 3) - 0.5) * area,
       y: (stableRandom(i * 3 + 1) - 0.5) * area,
       z: (stableRandom(i * 3 + 2) - 0.5) * area,
-      vx: (stableRandom(i * 3 + 3) - 0.5) * speed * 0.01,
-      vy: (stableRandom(i * 3 + 4) - 0.5) * speed * 0.01,
-      vz: (stableRandom(i * 3 + 5) - 0.5) * speed * 0.01,
-      phase: stableRandom(i * 3 + 6) * Math.PI * 2,
+      phase: stableRandom(i * 3 + 3) * Math.PI * 2,
     }))
-  }, [count, area, speed])
+  }, [count, area])
 
   useFrame(() => {
     if (!meshRef.current) return
@@ -72,17 +66,20 @@ export function ParticleField({
   )
 }
 
-// 反应轨迹粒子
-interface TrailParticlesProps {
-  positions: THREE.Vector3[]
+// 原子移动轨迹
+interface AtomTrailProps {
+  positions: [number, number, number][]
   color?: string
-  size?: number
+  width?: number
 }
 
-export function TrailParticles({ positions, color = '#4facfe', size = 0.03 }: TrailParticlesProps) {
+export function AtomTrail({ 
+  positions, 
+  color = '#4facfe', 
+  width = 0.02
+}: AtomTrailProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null!)
   const dummy = useMemo(() => new THREE.Object3D(), [])
-  
   const count = positions.length
 
   useFrame(() => {
@@ -90,8 +87,9 @@ export function TrailParticles({ positions, color = '#4facfe', size = 0.03 }: Tr
 
     for (let i = 0; i < count; i++) {
       const pos = positions[i]
-      dummy.position.copy(pos)
-      dummy.scale.setScalar(size * (1 - i / count))
+      
+      dummy.position.set(pos[0], pos[1], pos[2])
+      dummy.scale.setScalar(width * (1 - i / count * 0.5))
       dummy.updateMatrix()
       meshRef.current.setMatrixAt(i, dummy.matrix)
     }
@@ -178,5 +176,51 @@ export function BondBreakEffect({
         depthWrite={false}
       />
     </instancedMesh>
+  )
+}
+
+// 发光效果
+interface GlowEffectProps {
+  position: [number, number, number]
+  color?: string
+  size?: number
+  intensity?: number
+  active?: boolean
+}
+
+export function GlowEffect({ 
+  position, 
+  color = '#4facfe', 
+  size = 0.5, 
+  intensity = 0.5,
+  active = true 
+}: GlowEffectProps) {
+  const meshRef = useRef<THREE.Mesh>(null!)
+
+  useFrame(() => {
+    if (!meshRef.current || !active) return
+    
+    const time = Date.now() * 0.001
+    const scale = size * (0.8 + Math.sin(time * 2) * 0.2)
+    meshRef.current.scale.setScalar(scale)
+    
+    if (meshRef.current.material instanceof THREE.MeshBasicMaterial) {
+      meshRef.current.material.opacity = intensity * (0.5 + Math.sin(time * 3) * 0.5)
+    }
+  })
+
+  if (!active) return null
+
+  return (
+    <mesh ref={meshRef} position={position}>
+      <sphereGeometry args={[1, 16, 16]} />
+      <meshBasicMaterial
+        color={color}
+        transparent
+        opacity={intensity}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </mesh>
   )
 }

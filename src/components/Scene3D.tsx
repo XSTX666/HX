@@ -301,7 +301,7 @@ function SceneContent() {
       </mesh>
 
       {/* 粒子场效果 */}
-      <ParticleField count={150} size={0.015} color="#4facfe" speed={0.3} area={15} />
+      <ParticleField count={150} size={0.015} color="#4facfe" area={15} />
       
       <ReactionScene />
       <Stars />
