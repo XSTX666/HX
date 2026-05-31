@@ -20,6 +20,7 @@ const CATEGORIES: ReactionCategory[] = [
       { id: 'benzene-nitration', name: '苯的硝化', formula: 'C₆H₆ + HNO₃ → C₆H₅NO₂ + H₂O' },
       { id: 'benzene-sulfonation', name: '苯的磺化', formula: 'C₆H₆ + H₂SO₄ → C₆H₅SO₃H + H₂O' },
       { id: 'esterification', name: '酯化反应', formula: 'CH₃COOH + C₂H₅OH → 酯 + H₂O' },
+      { id: 'haloalkane-hydrolysis', name: '卤代烃水解', formula: 'C₂H₅Br + NaOH → C₂H₅OH' },
     ],
   },
   {
@@ -66,6 +67,14 @@ const CATEGORIES: ReactionCategory[] = [
     items: [
       { id: 'addition-poly', name: '加聚反应', formula: 'n CH₂=CH₂ → 聚乙烯' },
       { id: 'condensation-poly', name: '缩聚反应', formula: '乙二醇 + 对苯二甲酸 → 涤纶' },
+    ],
+  },
+  {
+    icon: '✨',
+    title: '特殊反应',
+    color: '#ffd93d',
+    items: [
+      { id: 'phenol-fecl3', name: '苯酚+FeCl₃', formula: 'C₆H₅OH + FeCl₃ → 紫色' },
     ],
   },
 ]

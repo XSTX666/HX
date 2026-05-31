@@ -761,6 +761,87 @@ export const ADDITION_POLY: ReactionData = {
   energyProfile: [0, 30, -100],
 }
 
+// 卤代烃水解反应数据
+export const HALOALKANE_HYDROLYSIS: ReactionData = {
+  id: 'haloalkane-hydrolysis',
+  name: '卤代烃水解',
+  formula: 'C₂H₅Br + NaOH → C₂H₅OH + NaBr',
+  category: 'substitution',
+  description: '溴乙烷与氢氧化钠发生水解反应',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-2, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.5, 0, 0] },
+    { id: 'br', element: 'Br', position: [-0.5, 1.94, 0] },
+    { id: 'na', element: 'Na', position: [3, 0, 0] },
+    { id: 'o', element: 'O', position: [4.5, 0, 0] },
+    { id: 'h', element: 'H', position: [5.5, 0, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-br', atom1Id: 'c2', atom2Id: 'br', type: 'single' },
+    { id: 'o-h', atom1Id: 'o', atom2Id: 'h', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { na: [3, 0, 0], o: [4.5, 0, 0], h: [5.5, 0, 0] } },
+    { progress: 50, atomPositions: { na: [1.5, 0.5, 0], o: [2.5, 0.5, 0], h: [3.5, 0.5, 0] } },
+    { progress: 100, atomPositions: { na: [0.5, 1.5, 0], o: [0, 1.0, 0], h: [4.0, 2.0, 0] }, bondOpacities: { 'c2-br': 0 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '溴乙烷和NaOH', concepts: ['卤代烃'], progress: 0 },
+    { id: 'step2', name: 'OH⁻接近', description: 'OH⁻向碳原子移动', concepts: ['亲核试剂'], progress: 50 },
+    { id: 'step3', name: '取代反应', description: 'Br被OH取代', concepts: ['SN2'], progress: 100 },
+  ],
+
+  energyProfile: [0, 25, -30],
+}
+
+// 苯酚与FeCl₃显色反应数据
+export const PHENOL_FECL3: ReactionData = {
+  id: 'phenol-fecl3',
+  name: '苯酚+FeCl₃',
+  formula: 'C₆H₅OH + FeCl₃ → 紫色络合物',
+  category: 'special',
+  description: '苯酚与三氯化铁发生显色反应',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 'o', element: 'O', position: [0, 2.5, 0] },
+    { id: 'h', element: 'H', position: [0, 3.5, 0] },
+    { id: 'fe', element: 'Fe', position: [4, 0, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'rc0-o', atom1Id: 'rc0', atom2Id: 'o', type: 'single' },
+    { id: 'o-h', atom1Id: 'o', atom2Id: 'h', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { fe: [4, 0, 0] } },
+    { progress: 50, atomPositions: { fe: [2, 0, 0] } },
+    { progress: 100, atomPositions: { fe: [1.5, 0.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '苯酚和FeCl₃', concepts: ['苯酚', 'Fe³⁺'], progress: 0 },
+    { id: 'step2', name: 'Fe³⁺接近', description: 'Fe³⁺向苯酚移动', concepts: ['络合'], progress: 50 },
+    { id: 'step3', name: '显色反应', description: '生成紫色络合物', concepts: ['显色'], progress: 100 },
+  ],
+
+  energyProfile: [0, 10, -5],
+}
+
 // 所有反应数据
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   'alkane-halogenation': ALKANE_HALOGENATION,
@@ -778,4 +859,6 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'alkyne-hydrogenation': ALKYNE_HYDROGENATION,
   'alcohol-oxidation': ALCOHOL_OXIDATION,
   'addition-poly': ADDITION_POLY,
+  'haloalkane-hydrolysis': HALOALKANE_HYDROLYSIS,
+  'phenol-fecl3': PHENOL_FECL3,
 }
