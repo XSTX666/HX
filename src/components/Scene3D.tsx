@@ -1,13 +1,13 @@
-import { useRef, useEffect, useMemo } from 'react'
+import { useRef, useEffect, useMemo, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useAppStore } from '../store/appStore'
 import { ALL_REACTIONS } from '../data/reactions'
-import { AtomData, BondData } from '../data/types'
 import ParticleEffect, { BondBreakEffect } from '../engine/ParticleEffects'
+import { checkWebGPUSupport } from '../engine/WebGPUDetector'
 
-// 原子颜色和半径（常量，避免重复创建）
+// 原子颜色和半径
 const ATOM_COLORS: Record<string, string> = {
   C: '#555555', H: '#f0f0f0', O: '#e83030', N: '#3050F8',
   Cl: '#1FF01F', Br: '#8B1A1A', S: '#FFFF30', Fe: '#E06633',
@@ -43,7 +43,7 @@ function getCachedMaterial(color: string, opacity: number = 1): THREE.MeshStanda
   return materialCache.get(key)!
 }
 
-// 优化的原子组件（带动画）
+// 原子组件（带动画）
 function Atom({ position, element, opacity = 1, scale = 1 }: { 
   position: [number, number, number], 
   element: string,
@@ -56,15 +56,9 @@ function Atom({ position, element, opacity = 1, scale = 1 }: {
   const material = useMemo(() => getCachedMaterial(color, opacity), [color, opacity])
   const meshRef = useRef<THREE.Mesh>(null!)
 
-  // 动画效果
   useFrame(() => {
     if (meshRef.current) {
-      // 平滑过渡位置
-      meshRef.current.position.lerp(
-        new THREE.Vector3(...position),
-        0.1
-      )
-      // 平滑过渡透明度
+      meshRef.current.position.lerp(new THREE.Vector3(...position), 0.1)
       if (meshRef.current.material instanceof THREE.MeshStandardMaterial) {
         meshRef.current.material.opacity += (opacity - meshRef.current.material.opacity) * 0.1
       }
@@ -83,7 +77,7 @@ function Atom({ position, element, opacity = 1, scale = 1 }: {
   )
 }
 
-// 优化的化学键组件（带动画）
+// 化学键组件（带动画）
 function Bond({ start, end, type = 'single', opacity = 1 }: {
   start: [number, number, number]
   end: [number, number, number]
@@ -104,14 +98,10 @@ function Bond({ start, end, type = 'single', opacity = 1 }: {
 
   const radius = type === 'double' ? 0.06 : type === 'triple' ? 0.05 : 0.08
 
-  // 动画效果
   useFrame(() => {
     if (meshRef.current) {
-      // 平滑过渡位置
       meshRef.current.position.lerp(targetPosition, 0.1)
-      // 平滑过渡旋转
       meshRef.current.quaternion.slerp(targetQuaternion, 0.1)
-      // 平滑过渡透明度
       if (meshRef.current.material instanceof THREE.MeshStandardMaterial) {
         meshRef.current.material.opacity += (opacity - meshRef.current.material.opacity) * 0.1
       }
@@ -132,7 +122,7 @@ function Bond({ start, end, type = 'single', opacity = 1 }: {
   )
 }
 
-// 星星背景（使用instancedMesh优化）
+// 星星背景
 function Stars() {
   const meshRef = useRef<THREE.InstancedMesh>(null!)
 
@@ -159,12 +149,11 @@ function Stars() {
   )
 }
 
-// 数据驱动的反应场景（优化版）
+// 反应场景
 function ReactionScene() {
   const { currentReaction, progress } = useAppStore()
   const reaction = currentReaction ? ALL_REACTIONS[currentReaction] : null
 
-  // 缓存原子位置计算
   const currentAtoms = useMemo(() => {
     if (!reaction) return []
 
@@ -197,7 +186,6 @@ function ReactionScene() {
     })
   }, [reaction, progress])
 
-  // 缓存键的透明度计算
   const currentBonds = useMemo(() => {
     if (!reaction) return []
 
@@ -226,7 +214,6 @@ function ReactionScene() {
     })
   }, [reaction, progress])
 
-  // 创建原子位置映射
   const atomPositions = useMemo(() => {
     const map = new Map<string, [number, number, number]>()
     currentAtoms.forEach(atom => map.set(atom.id, atom.position))
@@ -245,37 +232,21 @@ function ReactionScene() {
     )
   }
 
-  // 检测键断裂
   const brokenBonds = currentBonds.filter(bond => bond.opacity < 0.5)
 
   return (
     <group>
-      {/* 渲染原子 */}
       {currentAtoms.map(atom => (
-        <Atom
-          key={atom.id}
-          position={atom.position}
-          element={atom.element}
-        />
+        <Atom key={atom.id} position={atom.position} element={atom.element} />
       ))}
-      
-      {/* 渲染化学键 */}
       {currentBonds.map(bond => {
         const pos1 = atomPositions.get(bond.atom1Id)
         const pos2 = atomPositions.get(bond.atom2Id)
         if (!pos1 || !pos2) return null
         return (
-          <Bond
-            key={bond.id}
-            start={pos1}
-            end={pos2}
-            type={bond.type}
-            opacity={bond.opacity}
-          />
+          <Bond key={bond.id} start={pos1} end={pos2} type={bond.type} opacity={bond.opacity} />
         )
       })}
-
-      {/* 粒子效果（键断裂时显示） */}
       {brokenBonds.map(bond => {
         const pos1 = atomPositions.get(bond.atom1Id)
         const pos2 = atomPositions.get(bond.atom2Id)
@@ -286,15 +257,30 @@ function ReactionScene() {
           (pos1[2] + pos2[2]) / 2,
         ]
         return (
-          <BondBreakEffect
-            key={`effect-${bond.id}`}
-            position={midPos}
-            color="#ff6b4a"
-            active={bond.opacity < 0.3}
-          />
+          <BondBreakEffect key={`effect-${bond.id}`} position={midPos} color="#ff6b4a" active={bond.opacity < 0.3} />
         )
       })}
     </group>
+  )
+}
+
+// WebGPU 状态指示器
+function WebGPUIndicator({ isWebGPU }: { isWebGPU: boolean }) {
+  return (
+    <div style={{
+      position: 'absolute',
+      top: 10,
+      left: 10,
+      padding: '4px 8px',
+      borderRadius: '6px',
+      background: isWebGPU ? 'rgba(0, 242, 195, 0.2)' : 'rgba(255, 170, 51, 0.2)',
+      border: `1px solid ${isWebGPU ? 'rgba(0, 242, 195, 0.4)' : 'rgba(255, 170, 51, 0.4)'}`,
+      color: isWebGPU ? '#00f2c3' : '#ffaa33',
+      fontSize: '11px',
+      fontWeight: 600,
+    }}>
+      {isWebGPU ? '⚡ WebGPU' : '🔌 WebGL'}
+    </div>
   )
 }
 
@@ -302,55 +288,47 @@ function ReactionScene() {
 function SceneContent() {
   return (
     <>
-      {/* 灯光 */}
       <ambientLight intensity={2.5} color="#334466" />
-      <directionalLight
-        position={[6, 10, 6]}
-        intensity={5}
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-      />
+      <directionalLight position={[6, 10, 6]} intensity={5} castShadow shadow-mapSize={[1024, 1024]} />
       <directionalLight position={[-4, 2, -3]} intensity={2.5} color="#8899cc" />
       <directionalLight position={[-3, 4, -6]} intensity={3} color="#ffcc88" />
 
-      {/* 控制器 */}
-      <OrbitControls
-        enableDamping
-        dampingFactor={0.08}
-        minDistance={3}
-        maxDistance={20}
-      />
+      <OrbitControls enableDamping dampingFactor={0.08} minDistance={3} maxDistance={20} />
 
-      {/* 地面 */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, 0]} receiveShadow>
         <planeGeometry args={[50, 50]} />
         <meshStandardMaterial color="#0d0f1a" roughness={0.2} metalness={0.8} />
       </mesh>
 
-      {/* 反应场景 */}
       <ReactionScene />
-
-      {/* 星星背景 */}
       <Stars />
     </>
   )
 }
 
 export default function Scene3D() {
+  const [isWebGPU, setIsWebGPU] = useState(false)
+
+  useEffect(() => {
+    checkWebGPUSupport().then(setIsWebGPU)
+  }, [])
+
   return (
-    <Canvas
-      camera={{ position: [8, 5, 10], fov: 60 }}
-      shadows
-      gl={{ 
-        antialias: true, 
-        toneMapping: THREE.ACESFilmicToneMapping, 
-        toneMappingExposure: 1.3,
-        powerPreference: 'high-performance',
-      }}
-      style={{ background: '#1a1a2e' }}
-      frameloop="demand"
-    >
-      <SceneContent />
-    </Canvas>
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <Canvas
+        camera={{ position: [8, 5, 10], fov: 60 }}
+        shadows
+        gl={{ 
+          antialias: true, 
+          toneMapping: THREE.ACESFilmicToneMapping, 
+          toneMappingExposure: 1.3,
+          powerPreference: 'high-performance',
+        }}
+        style={{ background: '#1a1a2e' }}
+      >
+        <SceneContent />
+      </Canvas>
+      <WebGPUIndicator isWebGPU={isWebGPU} />
+    </div>
   )
 }
