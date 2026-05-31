@@ -842,6 +842,92 @@ export const PHENOL_FECL3: ReactionData = {
   energyProfile: [0, 10, -5],
 }
 
+// 苯环加氢反应数据
+export const BENZENE_HYDROGENATION: ReactionData = {
+  id: 'benzene-hydrogenation',
+  name: '苯环加氢',
+  formula: 'C₆H₆ + 3H₂ → C₆H₁₂',
+  category: 'addition',
+  description: '苯与氢气发生加成反应生成环己烷',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 'h1', element: 'H', position: [3, 0.5, 0] },
+    { id: 'h2', element: 'H', position: [4.09, 0.5, 0] },
+    { id: 'h3', element: 'H', position: [3, -0.5, 0] },
+    { id: 'h4', element: 'H', position: [4.09, -0.5, 0] },
+    { id: 'h5', element: 'H', position: [3, 0, 0.5] },
+    { id: 'h6', element: 'H', position: [4.09, 0, 0.5] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'h1-h2', atom1Id: 'h1', atom2Id: 'h2', type: 'single' },
+    { id: 'h3-h4', atom1Id: 'h3', atom2Id: 'h4', type: 'single' },
+    { id: 'h5-h6', atom1Id: 'h5', atom2Id: 'h6', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { h1: [3, 0.5, 0], h2: [4.09, 0.5, 0], h3: [3, -0.5, 0], h4: [4.09, -0.5, 0], h5: [3, 0, 0.5], h6: [4.09, 0, 0.5] } },
+    { progress: 50, atomPositions: { h1: [1.5, 0.5, 0], h2: [2.5, 0.5, 0], h3: [1.5, -0.5, 0], h4: [2.5, -0.5, 0], h5: [1.5, 0, 0.5], h6: [2.5, 0, 0.5] } },
+    { progress: 100, atomPositions: { h1: [0.5, 0.5, 0], h2: [1.0, 0.5, 0], h3: [0.5, -0.5, 0], h4: [1.0, -0.5, 0], h5: [0.5, 0, 0.5], h6: [1.0, 0, 0.5] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '苯和H₂', concepts: ['苯环', '芳香性'], progress: 0 },
+    { id: 'step2', name: 'H₂接近', description: 'H₂向苯环移动', concepts: ['催化剂'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成环己烷', concepts: ['加成反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 50, -200],
+}
+
+// 醛→酸催化氧化数据
+export const ALDEHYDE_OXIDATION: ReactionData = {
+  id: 'aldehyde-oxidation',
+  name: '醛→酸催化氧化',
+  formula: '2CH₃CHO + O₂ → 2CH₃COOH',
+  category: 'oxidation',
+  description: '乙醛氧化为乙酸',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-2, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [-0.5, 1.23, 0] },
+    { id: 'h1', element: 'H', position: [-0.5, -1.0, 0] },
+    { id: 'o2', element: 'O', position: [3, 0, 0] },
+    { id: 'o3', element: 'O', position: [4.5, 0, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'double' },
+    { id: 'c2-h1', atom1Id: 'c2', atom2Id: 'h1', type: 'single' },
+    { id: 'o2-o3', atom1Id: 'o2', atom2Id: 'o3', type: 'double' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { o2: [3, 0, 0], o3: [4.5, 0, 0] } },
+    { progress: 50, atomPositions: { o2: [1.5, 0.5, 0], o3: [2.5, 0.5, 0] } },
+    { progress: 100, atomPositions: { o2: [0.5, 0.5, 0], o3: [1.5, 0.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙醛和O₂', concepts: ['醛基'], progress: 0 },
+    { id: 'step2', name: 'O₂接近', description: 'O₂向醛基移动', concepts: ['氧化剂'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成乙酸', concepts: ['氧化反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 30, -300],
+}
+
 // 所有反应数据
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   'alkane-halogenation': ALKANE_HALOGENATION,
@@ -861,4 +947,6 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'addition-poly': ADDITION_POLY,
   'haloalkane-hydrolysis': HALOALKANE_HYDROLYSIS,
   'phenol-fecl3': PHENOL_FECL3,
+  'benzene-hydrogenation': BENZENE_HYDROGENATION,
+  'aldehyde-oxidation': ALDEHYDE_OXIDATION,
 }
