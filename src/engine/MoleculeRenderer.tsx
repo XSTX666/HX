@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
-import { AtomData, BondData } from '../data/types'
+import type { AtomData, BondData } from '../data/types'
 
 // 原子颜色和半径
 const ATOM_COLORS: Record<string, string> = {

@@ -1,4 +1,5 @@
-import { ReactionData, benzenePositions } from './types'
+import type { ReactionData } from './types'
+import { benzenePositions } from './types'
 
 // 烷烃卤代反应数据
 export const ALKANE_HALOGENATION: ReactionData = {
@@ -1043,7 +1044,7 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'aldehyde-oxidation': ALDEHYDE_OXIDATION,
   
   // 还原反应
-  'aldehyde-hydrogenation': ALDEHYDE_HYDROGENATION,
+  // (aldehyde-hydrogenation is in addition category)
   
   // 聚合反应
   'addition-poly': ADDITION_POLY,

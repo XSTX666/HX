@@ -85,6 +85,7 @@ export function TrailEffect({ positions, color = '#4facfe' }: TrailEffectProps) 
           array={new Float32Array(positions.flat())}
           count={positions.length}
           itemSize={3}
+          args={[new Float32Array(positions.flat()), 3]}
         />
       </bufferGeometry>
       <lineBasicMaterial color={color} transparent opacity={0.6} />

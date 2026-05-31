@@ -1,15 +1,23 @@
 // WASM模块包装器
-let wasmModule: any = null
+interface WasmModule {
+  calculate_distance: (pos1: number[], pos2: number[]) => number
+  calculate_angle: (pos1: number[], pos2: number[], pos3: number[]) => number
+  calculate_molecular_weight: (elements: string) => number
+  lerp: (start: number, end: number, t: number) => number
+  ease_in_out_cubic: (t: number) => number
+}
+
+let wasmModule: WasmModule | null = null
 
 // 初始化WASM模块
 export async function initWasm(): Promise<boolean> {
   try {
-    // 动态导入WASM模块
-    const module = await import('../../../public/wasm/chemistry_wasm')
-    await module.default()
-    wasmModule = module
-    console.log('WASM module loaded successfully')
-    return true
+    // 动态导入WASM模块（如果存在）
+    // const module = await import('../../../public/wasm/chemistry_wasm')
+    // await module.default()
+    // wasmModule = module
+    console.log('WASM module not compiled yet, using JavaScript fallback')
+    return false
   } catch (error) {
     console.warn('WASM module not available, using JavaScript fallback:', error)
     return false
