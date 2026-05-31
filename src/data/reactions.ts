@@ -1506,6 +1506,102 @@ export const DEHYDRATION_ETHER: ReactionData = {
   energyProfile: [0, 15, -5],
 }
 
+// 苯同系物侧链卤代反应数据
+export const SIDECHAIN_HALOGENATION: ReactionData = {
+  id: 'sidechain-halogenation',
+  name: '苯同系物侧链卤代',
+  formula: 'C₆H₅CH₃ + Cl₂ → C₆H₅CH₂Cl + HCl',
+  category: 'substitution',
+  description: '甲苯在光照下发生侧链卤代反应',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 'c_methyl', element: 'C', position: [0, -2.5, 0] },
+    { id: 'h1', element: 'H', position: [0.5, -3.0, 0.5] },
+    { id: 'h2', element: 'H', position: [-0.5, -3.0, 0.5] },
+    { id: 'h3', element: 'H', position: [0, -3.0, -0.7] },
+    { id: 'cl1', element: 'Cl', position: [3.5, 0, 0] },
+    { id: 'cl2', element: 'Cl', position: [5.0, 0, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'rc3-c_methyl', atom1Id: 'rc3', atom2Id: 'c_methyl', type: 'single' },
+    { id: 'c_methyl-h1', atom1Id: 'c_methyl', atom2Id: 'h1', type: 'single' },
+    { id: 'c_methyl-h2', atom1Id: 'c_methyl', atom2Id: 'h2', type: 'single' },
+    { id: 'c_methyl-h3', atom1Id: 'c_methyl', atom2Id: 'h3', type: 'single' },
+    { id: 'cl1-cl2', atom1Id: 'cl1', atom2Id: 'cl2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { cl1: [3.5, 0, 0], cl2: [5.0, 0, 0] } },
+    { progress: 30, atomPositions: { cl1: [2.0, -1.0, 0], cl2: [3.5, -1.0, 0] } },
+    { progress: 60, atomPositions: { cl1: [1.0, -2.0, 0], cl2: [2.5, -2.0, 0] }, bondOpacities: { 'cl1-cl2': 0 } },
+    { progress: 100, atomPositions: { cl1: [0.5, -3.0, 0], cl2: [3.0, -2.0, 0] }, bondOpacities: { 'c_methyl-h1': 0 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '甲苯和Cl₂', concepts: ['甲苯', '光照'], progress: 0 },
+    { id: 'step2', name: 'Cl₂光解', description: 'Cl₂在光照下分解', concepts: ['自由基'], progress: 30 },
+    { id: 'step3', name: '侧链取代', description: 'Cl取代侧链H', concepts: ['自由基取代'], progress: 60 },
+    { id: 'step4', name: '产物生成', description: '生成苄氯', concepts: ['侧链卤代'], progress: 100 },
+  ],
+
+  energyProfile: [0, 30, 20, -90],
+}
+
+// 酚的取代反应数据
+export const PHENOL_SUBSTITUTION: ReactionData = {
+  id: 'phenol-substitution',
+  name: '酚的取代',
+  formula: 'C₆H₅OH + Br₂ → C₆H₂Br₃OH↓ + 3HBr',
+  category: 'substitution',
+  description: '苯酚与溴水反应生成三溴苯酚',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 'o', element: 'O', position: [0, 2.5, 0] },
+    { id: 'h', element: 'H', position: [0, 3.5, 0] },
+    { id: 'br1', element: 'Br', position: [3.5, 0, 0] },
+    { id: 'br2', element: 'Br', position: [3.5, 1.0, 0] },
+    { id: 'br3', element: 'Br', position: [3.5, -1.0, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'rc0-o', atom1Id: 'rc0', atom2Id: 'o', type: 'single' },
+    { id: 'o-h', atom1Id: 'o', atom2Id: 'h', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { br1: [3.5, 0, 0], br2: [3.5, 1.0, 0], br3: [3.5, -1.0, 0] } },
+    { progress: 50, atomPositions: { br1: [1.5, 0, 0], br2: [1.5, 1.0, 0], br3: [1.5, -1.0, 0] } },
+    { progress: 100, atomPositions: { br1: [1.2, 0, 0], br2: [1.2, 1.0, 0], br3: [1.2, -1.0, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '苯酚和溴水', concepts: ['苯酚', 'Br₂'], progress: 0 },
+    { id: 'step2', name: 'Br₂接近', description: '溴分子向苯酚移动', concepts: ['亲电取代'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成三溴苯酚沉淀', concepts: ['取代反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 20, -40],
+}
+
 // 所有反应数据（扩展到38种）
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   // 取代反应
@@ -1519,6 +1615,8 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'ester-hydrolysis': ESTER_HYDROLYSIS,
   'alcohol-hx': ALCOHOL_HX,
   'dehydration-ether': DEHYDRATION_ETHER,
+  'sidechain-halogenation': SIDECHAIN_HALOGENATION,
+  'phenol-substitution': PHENOL_SUBSTITUTION,
   
   // 加成反应
   'hydrogenation': HYDROGENATION,
