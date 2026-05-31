@@ -231,9 +231,161 @@ export const CONDENSATION_POLY: ReactionData = {
   energyProfile: [0, 20, -10],
 }
 
+// 苯的溴代反应数据
+export const BENZENE_BROMINATION: ReactionData = {
+  id: 'benzene-bromination',
+  name: '苯的溴代反应',
+  formula: 'C₆H₆ + Br₂ → C₆H₅Br + HBr',
+  category: 'substitution',
+  description: '苯与溴在FeBr₃催化下发生亲电取代反应',
+
+  atoms: [
+    // 苯环
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    // Br₂
+    { id: 'br1', element: 'Br', position: [3.5, 0.5, 0] },
+    { id: 'br2', element: 'Br', position: [5.78, 0.5, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'br1-br2', atom1Id: 'br1', atom2Id: 'br2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { br1: [3.5, 0.5, 0], br2: [5.78, 0.5, 0] } },
+    { progress: 40, atomPositions: { br1: [2.0, 0.5, 0], br2: [4.28, 0.5, 0] } },
+    { progress: 70, atomPositions: { br1: [1.5, 1.0, 0], br2: [3.0, -0.5, 0] } },
+    { progress: 100, atomPositions: { br1: [1.5, 1.40, 0], br2: [4.0, 2.0, 0] } },
+    bondOpacities: { 'br1-br2': 0 },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '苯和Br₂', concepts: ['苯环', 'sp²杂化'], progress: 0 },
+    { id: 'step2', name: 'Br₂接近', description: 'Br₂向苯环移动', concepts: ['亲电试剂'], progress: 40 },
+    { id: 'step3', name: 'Br-Br断裂', description: 'Br-Br键断裂', concepts: ['键断裂'], progress: 70 },
+    { id: 'step4', name: '产物生成', description: '生成溴苯和HBr', concepts: ['亲电取代'], progress: 100 },
+  ],
+
+  energyProfile: [0, 30, 50, -20],
+}
+
+// 酯化反应数据
+export const ESTERIFICATION: ReactionData = {
+  id: 'esterification',
+  name: '酯化反应',
+  formula: 'CH₃COOH + C₂H₅OH → CH₃COOC₂H₅ + H₂O',
+  category: 'substitution',
+  description: '乙酸与乙醇在浓硫酸催化下发生酯化反应',
+
+  atoms: [
+    // 乙酸
+    { id: 'c1', element: 'C', position: [-3, 0, 0] },
+    { id: 'c2', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [-1.5, 1.23, 0] },
+    { id: 'o2', element: 'O', position: [-1.5, -1.43, 0] },
+    { id: 'h1', element: 'H', position: [-1.5, -2.39, 0] },
+    // 乙醇
+    { id: 'c3', element: 'C', position: [2, 0, 0] },
+    { id: 'c4', element: 'C', position: [3.5, 0, 0] },
+    { id: 'o3', element: 'O', position: [3.5, 1.43, 0] },
+    { id: 'h2', element: 'H', position: [3.5, 2.39, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'double' },
+    { id: 'c2-o2', atom1Id: 'c2', atom2Id: 'o2', type: 'single' },
+    { id: 'o2-h1', atom1Id: 'o2', atom2Id: 'h1', type: 'single' },
+    { id: 'c3-c4', atom1Id: 'c3', atom2Id: 'c4', type: 'single' },
+    { id: 'c4-o3', atom1Id: 'c4', atom2Id: 'o3', type: 'single' },
+    { id: 'o3-h2', atom1Id: 'o3', atom2Id: 'h2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: {} },
+    { progress: 50, atomPositions: {
+      c3: [0.5, 0, 0], c4: [2, 0, 0], o3: [2, 1.43, 0], h2: [2, 2.39, 0]
+    }},
+    { progress: 100, atomPositions: {
+      c3: [0, 0, 0], c4: [1.5, 0, 0], o3: [1.5, 1.43, 0], h2: [4, 2, 0]
+    }},
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙酸和乙醇', concepts: ['羧基', '羟基'], progress: 0 },
+    { id: 'step2', name: '分子靠近', description: '分子相互接近', concepts: ['氢键'], progress: 50 },
+    { id: 'step3', name: '酯化脱水', description: '形成酯键，脱去水', concepts: ['酯化反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 15, -10],
+}
+
+// 醇消去反应数据
+export const ETHANOL_ELIMINATION: ReactionData = {
+  id: 'ethanol-elimination',
+  name: '醇消去反应',
+  formula: 'CH₃CH₂OH → CH₂=CH₂ + H₂O',
+  category: 'elimination',
+  description: '乙醇在浓硫酸催化下发生消去反应生成乙烯',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'c2', element: 'C', position: [0, 0, 0] },
+    { id: 'o1', element: 'O', position: [0, 1.43, 0] },
+    { id: 'h1', element: 'H', position: [0, 2.39, 0] },
+    { id: 'h2', element: 'H', position: [-2.04, 0.935, 0] },
+    { id: 'h3', element: 'H', position: [-2.04, -0.935, 0] },
+    { id: 'h4', element: 'H', position: [0.38, 0.935, 0] },
+    { id: 'h5', element: 'H', position: [0.38, -0.935, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'single' },
+    { id: 'c2-o1', atom1Id: 'c2', atom2Id: 'o1', type: 'single' },
+    { id: 'o1-h1', atom1Id: 'o1', atom2Id: 'h1', type: 'single' },
+    { id: 'c1-h2', atom1Id: 'c1', atom2Id: 'h2', type: 'single' },
+    { id: 'c1-h3', atom1Id: 'c1', atom2Id: 'h3', type: 'single' },
+    { id: 'c2-h4', atom1Id: 'c2', atom2Id: 'h4', type: 'single' },
+    { id: 'c2-h5', atom1Id: 'c2', atom2Id: 'h5', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: {} },
+    { progress: 40, atomPositions: {
+      o1: [0.5, 2, 0], h1: [0.5, 3, 0]
+    }},
+    { progress: 70, atomPositions: {
+      o1: [1, 3, 0], h1: [1, 4, 0]
+    }, bondOpacities: { 'c2-o1': 0, 'o1-h1': 0 }},
+    { progress: 100, atomPositions: {
+      o1: [2, 4, 0], h1: [2, 5, 0]
+    }},
+  ],
+
+  steps: [
+    { id: 'step1', name: '乙醇就位', description: '乙醇分子', concepts: ['sp³杂化'], progress: 0 },
+    { id: 'step2', name: 'O-H断裂', description: 'O-H键断裂', concepts: ['质子化'], progress: 40 },
+    { id: 'step3', name: 'C-O断裂', description: 'C-O键断裂', concepts: ['消去'], progress: 70 },
+    { id: 'step4', name: '产物生成', description: '生成乙烯和水', concepts: ['消去反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 30, 40, -10],
+}
+
 // 所有反应数据
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   'alkane-halogenation': ALKANE_HALOGENATION,
   'hydrogenation': HYDROGENATION,
   'condensation-poly': CONDENSATION_POLY,
+  'benzene-bromination': BENZENE_BROMINATION,
+  'esterification': ESTERIFICATION,
+  'ethanol-elimination': ETHANOL_ELIMINATION,
 }

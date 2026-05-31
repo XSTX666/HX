@@ -17,6 +17,8 @@ const CATEGORIES: ReactionCategory[] = [
     color: '#4facfe',
     items: [
       { id: 'alkane-halogenation', name: '烷烃卤代', formula: 'CH₄ + Cl₂ → CH₃Cl + HCl' },
+      { id: 'benzene-bromination', name: '苯的溴代', formula: 'C₆H₆ + Br₂ → C₆H₅Br + HBr' },
+      { id: 'esterification', name: '酯化反应', formula: 'CH₃COOH + C₂H₅OH → 酯 + H₂O' },
     ],
   },
   {
@@ -28,9 +30,17 @@ const CATEGORIES: ReactionCategory[] = [
     ],
   },
   {
+    icon: '💨',
+    title: '消去反应',
+    color: '#ff6b4a',
+    items: [
+      { id: 'ethanol-elimination', name: '醇消去', formula: 'CH₃CH₂OH → CH₂=CH₂ + H₂O' },
+    ],
+  },
+  {
     icon: '🔗',
     title: '聚合反应',
-    color: '#ff6b4a',
+    color: '#ffaa33',
     items: [
       { id: 'condensation-poly', name: '缩聚反应', formula: '乙二醇 + 对苯二甲酸 → 涤纶' },
     ],
