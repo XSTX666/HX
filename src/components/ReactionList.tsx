@@ -56,14 +56,6 @@ const CATEGORIES: ReactionCategory[] = [
     ],
   },
   {
-    icon: '⚡',
-    title: '还原反应',
-    color: '#a855f7',
-    items: [
-      // 醛酮加氢已在加成反应中
-    ],
-  },
-  {
     icon: '🔗',
     title: '聚合反应',
     color: '#ff6b6b',
@@ -79,6 +71,9 @@ const CATEGORIES: ReactionCategory[] = [
     items: [
       { id: 'phenol-fecl3', name: '苯酚+FeCl₃', formula: 'C₆H₅OH + FeCl₃ → 紫色' },
       { id: 'acetic-naoh', name: '乙酸+NaOH', formula: 'CH₃COOH + NaOH → 醋酸钠' },
+      { id: 'phenol-naoh', name: '苯酚+NaOH', formula: 'C₆H₅OH + NaOH → 苯酚钠' },
+      { id: 'phenol-na2co3', name: '苯酚+Na₂CO₃', formula: 'C₆H₅OH + Na₂CO₃ → NaHCO₃' },
+      { id: 'protein-hno3', name: '蛋白质+浓硝酸', formula: '蛋白质 + HNO₃ → 黄色' },
     ],
   },
 ]

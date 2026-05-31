@@ -1016,6 +1016,148 @@ export const ACETIC_NAOH: ReactionData = {
   energyProfile: [0, 10, -55],
 }
 
+// 苯酚+NaOH反应数据
+export const PHENOL_NAOH: ReactionData = {
+  id: 'phenol-naoh',
+  name: '苯酚+NaOH',
+  formula: 'C₆H₅OH + NaOH → C₆H₅ONa + H₂O',
+  category: 'special',
+  description: '苯酚与氢氧化钠反应',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 'o', element: 'O', position: [0, 2.5, 0] },
+    { id: 'h', element: 'H', position: [0, 3.5, 0] },
+    { id: 'na', element: 'Na', position: [3.5, 0, 0] },
+    { id: 'o2', element: 'O', position: [5.0, 0, 0] },
+    { id: 'h2', element: 'H', position: [6.0, 0, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'rc0-o', atom1Id: 'rc0', atom2Id: 'o', type: 'single' },
+    { id: 'o-h', atom1Id: 'o', atom2Id: 'h', type: 'single' },
+    { id: 'o2-h2', atom1Id: 'o2', atom2Id: 'h2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { na: [3.5, 0, 0], o2: [5.0, 0, 0], h2: [6.0, 0, 0] } },
+    { progress: 50, atomPositions: { na: [1.5, 0, 0], o2: [2.5, 0, 0], h2: [3.5, 0, 0] } },
+    { progress: 100, atomPositions: { na: [0.8, 2.0, 0], o2: [2.0, 2.0, 0], h2: [3.0, 2.0, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '苯酚和NaOH', concepts: ['苯酚', '碱'], progress: 0 },
+    { id: 'step2', name: 'OH⁻接近', description: 'OH⁻向苯酚移动', concepts: ['中和'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成苯酚钠', concepts: ['中和反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 10, -30],
+}
+
+// 苯酚+Na₂CO₃反应数据
+export const PHENOL_NA2CO3: ReactionData = {
+  id: 'phenol-na2co3',
+  name: '苯酚+Na₂CO₃',
+  formula: 'C₆H₅OH + Na₂CO₃ → C₆H₅ONa + NaHCO₃',
+  category: 'special',
+  description: '苯酚与碳酸钠反应',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 'o', element: 'O', position: [0, 2.5, 0] },
+    { id: 'h', element: 'H', position: [0, 3.5, 0] },
+    { id: 'na1', element: 'Na', position: [3.5, 0, 0] },
+    { id: 'c', element: 'C', position: [5.0, 0, 0] },
+    { id: 'o1', element: 'O', position: [5.0, 1.23, 0] },
+    { id: 'o2', element: 'O', position: [5.0, -1.23, 0] },
+    { id: 'o3', element: 'O', position: [6.5, 0, 0] },
+    { id: 'na2', element: 'Na', position: [8.0, 0, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'rc0-o', atom1Id: 'rc0', atom2Id: 'o', type: 'single' },
+    { id: 'o-h', atom1Id: 'o', atom2Id: 'h', type: 'single' },
+    { id: 'c-o1', atom1Id: 'c', atom2Id: 'o1', type: 'double' },
+    { id: 'c-o2', atom1Id: 'c', atom2Id: 'o2', type: 'single' },
+    { id: 'c-o3', atom1Id: 'c', atom2Id: 'o3', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { na1: [3.5, 0, 0], c: [5.0, 0, 0], o1: [5.0, 1.23, 0], o2: [5.0, -1.23, 0], o3: [6.5, 0, 0], na2: [8.0, 0, 0] } },
+    { progress: 50, atomPositions: { na1: [1.5, 0, 0], c: [3.0, 0, 0], o1: [3.0, 1.23, 0], o2: [3.0, -1.23, 0], o3: [4.5, 0, 0], na2: [6.0, 0, 0] } },
+    { progress: 100, atomPositions: { na1: [0.8, 2.0, 0], c: [2.0, 2.0, 0], o1: [2.0, 3.23, 0], o2: [2.0, 0.77, 0], o3: [3.5, 2.0, 0], na2: [5.0, 2.0, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '苯酚和Na₂CO₃', concepts: ['苯酚', '碳酸钠'], progress: 0 },
+    { id: 'step2', name: 'CO₃²⁻接近', description: 'CO₃²⁻向苯酚移动', concepts: ['弱酸'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成苯酚钠和NaHCO₃', concepts: ['酸性比较'], progress: 100 },
+  ],
+
+  energyProfile: [0, 10, -10],
+}
+
+// 蛋白质+浓硝酸反应数据
+export const PROTEIN_HNO3: ReactionData = {
+  id: 'protein-hno3',
+  name: '蛋白质+浓硝酸',
+  formula: '蛋白质 + 浓HNO₃ → 黄色',
+  category: 'special',
+  description: '蛋白质与浓硝酸发生显色反应',
+
+  atoms: [
+    { id: 'n', element: 'N', position: [0, 0, 0] },
+    { id: 'h1', element: 'H', position: [0.5, 0.866, 0] },
+    { id: 'h2', element: 'H', position: [-0.5, 0.866, 0] },
+    { id: 'h3', element: 'H', position: [0, -1, 0] },
+    { id: 'c', element: 'C', position: [2, 0, 0] },
+    { id: 'o', element: 'O', position: [3.23, 0, 0] },
+    { id: 'n2', element: 'N', position: [5, 0, 0] },
+    { id: 'o1', element: 'O', position: [6.0, 0.8, 0] },
+    { id: 'o2', element: 'O', position: [6.0, -0.8, 0] },
+  ],
+
+  bonds: [
+    { id: 'n-h1', atom1Id: 'n', atom2Id: 'h1', type: 'single' },
+    { id: 'n-h2', atom1Id: 'n', atom2Id: 'h2', type: 'single' },
+    { id: 'n-h3', atom1Id: 'n', atom2Id: 'h3', type: 'single' },
+    { id: 'n-c', atom1Id: 'n', atom2Id: 'c', type: 'single' },
+    { id: 'c-o', atom1Id: 'c', atom2Id: 'o', type: 'double' },
+    { id: 'n2-o1', atom1Id: 'n2', atom2Id: 'o1', type: 'double' },
+    { id: 'n2-o2', atom1Id: 'n2', atom2Id: 'o2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { n2: [5, 0, 0], o1: [6.0, 0.8, 0], o2: [6.0, -0.8, 0] } },
+    { progress: 50, atomPositions: { n2: [2.5, 0.5, 0], o1: [3.5, 1.3, 0], o2: [3.5, -0.3, 0] } },
+    { progress: 100, atomPositions: { n2: [1.5, 0.5, 0], o1: [2.5, 1.3, 0], o2: [2.5, -0.3, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '蛋白质和浓HNO₃', concepts: ['蛋白质', '硝酸'], progress: 0 },
+    { id: 'step2', name: 'HNO₃接近', description: 'HNO₃向蛋白质移动', concepts: ['硝化'], progress: 50 },
+    { id: 'step3', name: '显色反应', description: '生成黄色物质', concepts: ['黄蛋白反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 10, -5],
+}
+
 // 所有反应数据（扩展到38种）
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   // 取代反应
@@ -1043,9 +1185,6 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'alcohol-oxidation': ALCOHOL_OXIDATION,
   'aldehyde-oxidation': ALDEHYDE_OXIDATION,
   
-  // 还原反应
-  // (aldehyde-hydrogenation is in addition category)
-  
   // 聚合反应
   'addition-poly': ADDITION_POLY,
   'condensation-poly': CONDENSATION_POLY,
@@ -1053,4 +1192,7 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   // 特殊反应
   'phenol-fecl3': PHENOL_FECL3,
   'acetic-naoh': ACETIC_NAOH,
+  'phenol-naoh': PHENOL_NAOH,
+  'phenol-na2co3': PHENOL_NA2CO3,
+  'protein-hno3': PROTEIN_HNO3,
 }
