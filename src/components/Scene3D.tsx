@@ -43,30 +43,55 @@ function getCachedMaterial(color: string, opacity: number = 1): THREE.MeshStanda
   return materialCache.get(key)!
 }
 
-// 优化的原子组件
-function Atom({ position, element, opacity = 1 }: { 
+// 优化的原子组件（带动画）
+function Atom({ position, element, opacity = 1, scale = 1 }: { 
   position: [number, number, number], 
   element: string,
-  opacity?: number
+  opacity?: number,
+  scale?: number
 }) {
   const radius = ATOM_RADII[element] || 0.3
   const color = ATOM_COLORS[element] || '#888888'
   const geometry = useMemo(() => getCachedSphereGeometry(radius), [radius])
   const material = useMemo(() => getCachedMaterial(color, opacity), [color, opacity])
+  const meshRef = useRef<THREE.Mesh>(null!)
+
+  // 动画效果
+  useFrame(() => {
+    if (meshRef.current) {
+      // 平滑过渡位置
+      meshRef.current.position.lerp(
+        new THREE.Vector3(...position),
+        0.1
+      )
+      // 平滑过渡透明度
+      if (meshRef.current.material instanceof THREE.MeshStandardMaterial) {
+        meshRef.current.material.opacity += (opacity - meshRef.current.material.opacity) * 0.1
+      }
+    }
+  })
 
   return (
-    <mesh position={position} geometry={geometry} material={material} castShadow />
+    <mesh 
+      ref={meshRef}
+      position={position} 
+      geometry={geometry} 
+      material={material} 
+      castShadow
+      scale={scale}
+    />
   )
 }
 
-// 优化的化学键组件
+// 优化的化学键组件（带动画）
 function Bond({ start, end, type = 'single', opacity = 1 }: {
   start: [number, number, number]
   end: [number, number, number]
   type?: 'single' | 'double' | 'triple'
   opacity?: number
 }) {
-  const { position, quaternion, length } = useMemo(() => {
+  const meshRef = useRef<THREE.Mesh>(null!)
+  const { targetPosition, targetQuaternion, targetLength } = useMemo(() => {
     const startVec = new THREE.Vector3(...start)
     const endVec = new THREE.Vector3(...end)
     const direction = new THREE.Vector3().subVectors(endVec, startVec)
@@ -74,14 +99,28 @@ function Bond({ start, end, type = 'single', opacity = 1 }: {
     const center = new THREE.Vector3().addVectors(startVec, endVec).multiplyScalar(0.5)
     const quat = new THREE.Quaternion()
     quat.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize())
-    return { position: center, quaternion: quat, length: len }
+    return { targetPosition: center, targetQuaternion: quat, targetLength: len }
   }, [start, end])
 
   const radius = type === 'double' ? 0.06 : type === 'triple' ? 0.05 : 0.08
 
+  // 动画效果
+  useFrame(() => {
+    if (meshRef.current) {
+      // 平滑过渡位置
+      meshRef.current.position.lerp(targetPosition, 0.1)
+      // 平滑过渡旋转
+      meshRef.current.quaternion.slerp(targetQuaternion, 0.1)
+      // 平滑过渡透明度
+      if (meshRef.current.material instanceof THREE.MeshStandardMaterial) {
+        meshRef.current.material.opacity += (opacity - meshRef.current.material.opacity) * 0.1
+      }
+    }
+  })
+
   return (
-    <mesh position={position} quaternion={quaternion} castShadow>
-      <cylinderGeometry args={[radius, radius, length, 8]} />
+    <mesh ref={meshRef} position={start} quaternion={targetQuaternion} castShadow>
+      <cylinderGeometry args={[radius, radius, targetLength, 8]} />
       <meshStandardMaterial 
         color="#888888" 
         roughness={0.3} 
