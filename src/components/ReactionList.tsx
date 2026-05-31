@@ -18,6 +18,7 @@ const CATEGORIES: ReactionCategory[] = [
     items: [
       { id: 'alkane-halogenation', name: '烷烃卤代', formula: 'CH₄ + Cl₂ → CH₃Cl + HCl' },
       { id: 'benzene-bromination', name: '苯的溴代', formula: 'C₆H₆ + Br₂ → C₆H₅Br + HBr' },
+      { id: 'benzene-nitration', name: '苯的硝化', formula: 'C₆H₆ + HNO₃ → C₆H₅NO₂ + H₂O' },
       { id: 'esterification', name: '酯化反应', formula: 'CH₃COOH + C₂H₅OH → 酯 + H₂O' },
     ],
   },
@@ -27,6 +28,7 @@ const CATEGORIES: ReactionCategory[] = [
     color: '#00f2c3',
     items: [
       { id: 'hydrogenation', name: '烯烃加氢', formula: 'CH₂=CH₂ + H₂ → CH₃CH₃' },
+      { id: 'alkene-halogenation', name: '烯烃加卤素', formula: 'CH₂=CH₂ + Br₂ → CH₂BrCH₂Br' },
     ],
   },
   {
@@ -38,9 +40,17 @@ const CATEGORIES: ReactionCategory[] = [
     ],
   },
   {
+    icon: '🔥',
+    title: '氧化反应',
+    color: '#ffaa33',
+    items: [
+      { id: 'combustion', name: '燃烧', formula: 'CH₄ + 2O₂ → CO₂ + 2H₂O' },
+    ],
+  },
+  {
     icon: '🔗',
     title: '聚合反应',
-    color: '#ffaa33',
+    color: '#ff6b6b',
     items: [
       { id: 'condensation-poly', name: '缩聚反应', formula: '乙二醇 + 对苯二甲酸 → 涤纶' },
     ],

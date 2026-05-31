@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { useAppStore } from '../store/appStore'
 import { ALL_REACTIONS } from '../data/reactions'
 import { AtomData, BondData } from '../data/types'
+import ParticleEffect, { BondBreakEffect } from '../engine/ParticleEffects'
 
 // 原子颜色和半径（常量，避免重复创建）
 const ATOM_COLORS: Record<string, string> = {
@@ -205,8 +206,12 @@ function ReactionScene() {
     )
   }
 
+  // 检测键断裂
+  const brokenBonds = currentBonds.filter(bond => bond.opacity < 0.5)
+
   return (
     <group>
+      {/* 渲染原子 */}
       {currentAtoms.map(atom => (
         <Atom
           key={atom.id}
@@ -214,6 +219,8 @@ function ReactionScene() {
           element={atom.element}
         />
       ))}
+      
+      {/* 渲染化学键 */}
       {currentBonds.map(bond => {
         const pos1 = atomPositions.get(bond.atom1Id)
         const pos2 = atomPositions.get(bond.atom2Id)
@@ -225,6 +232,26 @@ function ReactionScene() {
             end={pos2}
             type={bond.type}
             opacity={bond.opacity}
+          />
+        )
+      })}
+
+      {/* 粒子效果（键断裂时显示） */}
+      {brokenBonds.map(bond => {
+        const pos1 = atomPositions.get(bond.atom1Id)
+        const pos2 = atomPositions.get(bond.atom2Id)
+        if (!pos1 || !pos2) return null
+        const midPos: [number, number, number] = [
+          (pos1[0] + pos2[0]) / 2,
+          (pos1[1] + pos2[1]) / 2,
+          (pos1[2] + pos2[2]) / 2,
+        ]
+        return (
+          <BondBreakEffect
+            key={`effect-${bond.id}`}
+            position={midPos}
+            color="#ff6b4a"
+            active={bond.opacity < 0.3}
           />
         )
       })}

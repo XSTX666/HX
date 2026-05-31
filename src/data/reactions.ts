@@ -379,6 +379,137 @@ export const ETHANOL_ELIMINATION: ReactionData = {
   energyProfile: [0, 30, 40, -10],
 }
 
+// 苯的硝化反应数据
+export const BENZENE_NITRATION: ReactionData = {
+  id: 'benzene-nitration',
+  name: '苯的硝化反应',
+  formula: 'C₆H₆ + HNO₃ → C₆H₅NO₂ + H₂O',
+  category: 'substitution',
+  description: '苯与浓硝酸在浓硫酸催化下发生硝化反应',
+
+  atoms: [
+    ...benzenePositions([0, 0, 0], 1.40).map((pos, i) => ({
+      id: `rc${i}`, element: 'C', position: pos as [number, number, number]
+    })),
+    { id: 'n1', element: 'N', position: [3.5, 0, 0] },
+    { id: 'o1', element: 'O', position: [4.5, 0.8, 0] },
+    { id: 'o2', element: 'O', position: [4.5, -0.8, 0] },
+  ],
+
+  bonds: [
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: `rc${i}-rc${(i + 1) % 6}`,
+      atom1Id: `rc${i}`,
+      atom2Id: `rc${(i + 1) % 6}`,
+      type: 'single' as const,
+    })),
+    { id: 'n1-o1', atom1Id: 'n1', atom2Id: 'o1', type: 'double' },
+    { id: 'n1-o2', atom1Id: 'n1', atom2Id: 'o2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { n1: [3.5, 0, 0], o1: [4.5, 0.8, 0], o2: [4.5, -0.8, 0] } },
+    { progress: 50, atomPositions: { n1: [1.8, 1.0, 0], o1: [2.8, 1.8, 0], o2: [2.8, 0.2, 0] } },
+    { progress: 100, atomPositions: { n1: [1.5, 1.40, 0], o1: [2.5, 2.2, 0], o2: [2.5, 0.6, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '苯和HNO₃', concepts: ['苯环', '硝酸'], progress: 0 },
+    { id: 'step2', name: 'NO₂⁺生成', description: 'HNO₃质子化', concepts: ['亲电试剂'], progress: 50 },
+    { id: 'step3', name: '产物生成', description: '生成硝基苯', concepts: ['亲电取代'], progress: 100 },
+  ],
+
+  energyProfile: [0, 40, -15],
+}
+
+// 燃烧反应数据
+export const COMBUSTION: ReactionData = {
+  id: 'combustion',
+  name: '燃烧反应',
+  formula: 'CH₄ + 2O₂ → CO₂ + 2H₂O',
+  category: 'oxidation',
+  description: '甲烷在氧气中完全燃烧',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [0, 0, 0] },
+    { id: 'h1', element: 'H', position: [0.63, 0.63, 0.63] },
+    { id: 'h2', element: 'H', position: [-0.63, -0.63, 0.63] },
+    { id: 'h3', element: 'H', position: [-0.63, 0.63, -0.63] },
+    { id: 'h4', element: 'H', position: [0.63, -0.63, -0.63] },
+    { id: 'o1', element: 'O', position: [3, 0, 0] },
+    { id: 'o2', element: 'O', position: [4.5, 0, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-h1', atom1Id: 'c1', atom2Id: 'h1', type: 'single' },
+    { id: 'c1-h2', atom1Id: 'c1', atom2Id: 'h2', type: 'single' },
+    { id: 'c1-h3', atom1Id: 'c1', atom2Id: 'h3', type: 'single' },
+    { id: 'c1-h4', atom1Id: 'c1', atom2Id: 'h4', type: 'single' },
+    { id: 'o1-o2', atom1Id: 'o1', atom2Id: 'o2', type: 'double' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: {} },
+    { progress: 30, atomPositions: { o1: [1.5, 0, 0], o2: [3.0, 0, 0] } },
+    { progress: 60, atomPositions: { o1: [0.5, 0.5, 0], o2: [1.5, -0.5, 0] }, bondOpacities: { 'c1-h1': 0, 'c1-h2': 0, 'c1-h3': 0, 'c1-h4': 0, 'o1-o2': 0 } },
+    { progress: 100, atomPositions: { o1: [0.5, 0.5, 0], o2: [1.5, -0.5, 0] } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '甲烷和氧气', concepts: ['sp³杂化'], progress: 0 },
+    { id: 'step2', name: 'O₂接近', description: '氧气向甲烷移动', concepts: ['氧化剂'], progress: 30 },
+    { id: 'step3', name: '键断裂', description: 'C-H和O=O断裂', concepts: ['键断裂'], progress: 60 },
+    { id: 'step4', name: '产物生成', description: '生成CO₂和H₂O', concepts: ['燃烧'], progress: 100 },
+  ],
+
+  energyProfile: [0, 80, 50, -800],
+}
+
+// 烯烃加卤素反应数据
+export const ALKENE_HALOGENATION: ReactionData = {
+  id: 'alkene-halogenation',
+  name: '烯烃加卤素',
+  formula: 'CH₂=CH₂ + Br₂ → CH₂BrCH₂Br',
+  category: 'addition',
+  description: '乙烯与溴发生加成反应',
+
+  atoms: [
+    { id: 'c1', element: 'C', position: [-1.5, 0, 0] },
+    { id: 'c2', element: 'C', position: [-0.16, 0, 0] },
+    { id: 'h1', element: 'H', position: [-2.04, 0.935, 0] },
+    { id: 'h2', element: 'H', position: [-2.04, -0.935, 0] },
+    { id: 'h3', element: 'H', position: [0.38, 0.935, 0] },
+    { id: 'h4', element: 'H', position: [0.38, -0.935, 0] },
+    { id: 'br1', element: 'Br', position: [3, 0.5, 0] },
+    { id: 'br2', element: 'Br', position: [5.28, 0.5, 0] },
+  ],
+
+  bonds: [
+    { id: 'c1-c2', atom1Id: 'c1', atom2Id: 'c2', type: 'double' },
+    { id: 'c1-h1', atom1Id: 'c1', atom2Id: 'h1', type: 'single' },
+    { id: 'c1-h2', atom1Id: 'c1', atom2Id: 'h2', type: 'single' },
+    { id: 'c2-h3', atom1Id: 'c2', atom2Id: 'h3', type: 'single' },
+    { id: 'c2-h4', atom1Id: 'c2', atom2Id: 'h4', type: 'single' },
+    { id: 'br1-br2', atom1Id: 'br1', atom2Id: 'br2', type: 'single' },
+  ],
+
+  keyframes: [
+    { progress: 0, atomPositions: { br1: [3, 0.5, 0], br2: [5.28, 0.5, 0] } },
+    { progress: 40, atomPositions: { br1: [1.5, 0.5, 0], br2: [3.78, 0.5, 0] } },
+    { progress: 70, atomPositions: { br1: [0.5, 0.5, 0], br2: [2.0, 0.5, 0] }, bondOpacities: { 'br1-br2': 0 } },
+    { progress: 100, atomPositions: { br1: [-0.5, 0.5, 0], br2: [1.0, 0.5, 0] }, bondOpacities: { 'br1-br2': 0, 'c1-c2': 0.5 } },
+  ],
+
+  steps: [
+    { id: 'step1', name: '反应物就位', description: '乙烯和Br₂', concepts: ['C=C双键'], progress: 0 },
+    { id: 'step2', name: 'Br₂接近', description: 'Br₂向乙烯移动', concepts: ['π电子'], progress: 40 },
+    { id: 'step3', name: 'Br-Br断裂', description: 'Br-Br键断裂', concepts: ['键断裂'], progress: 70 },
+    { id: 'step4', name: '产物生成', description: '生成1,2-二溴乙烷', concepts: ['加成反应'], progress: 100 },
+  ],
+
+  energyProfile: [0, 20, 40, -120],
+}
+
 // 所有反应数据
 export const ALL_REACTIONS: Record<string, ReactionData> = {
   'alkane-halogenation': ALKANE_HALOGENATION,
@@ -387,4 +518,7 @@ export const ALL_REACTIONS: Record<string, ReactionData> = {
   'benzene-bromination': BENZENE_BROMINATION,
   'esterification': ESTERIFICATION,
   'ethanol-elimination': ETHANOL_ELIMINATION,
+  'benzene-nitration': BENZENE_NITRATION,
+  'combustion': COMBUSTION,
+  'alkene-halogenation': ALKENE_HALOGENATION,
 }
