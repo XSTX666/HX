@@ -7,6 +7,9 @@ import { ALL_REACTIONS } from '../data/reactions'
 import { BondBreakEffect, ParticleField } from '../engine/ParticleEffects'
 import { checkWebGPUSupport } from '../engine/WebGPUDetector'
 
+// 版本号 - 每次修改时更新
+const VERSION = 'v1.0.1'
+
 // 原子颜色和半径
 const ATOM_COLORS: Record<string, string> = {
   C: '#555555', H: '#f0f0f0', O: '#e83030', N: '#3050F8',
@@ -332,6 +335,22 @@ export default function Scene3D() {
         <SceneContent />
       </Canvas>
       <WebGPUIndicator isWebGPU={isWebGPU} />
+      
+      {/* 版本号标记 */}
+      <div style={{
+        position: 'absolute',
+        bottom: '10px',
+        right: '10px',
+        color: '#ff4444',
+        fontSize: '12px',
+        fontWeight: 'bold',
+        fontFamily: 'monospace',
+        textShadow: '0 0 10px rgba(255,0,0,0.5)',
+        pointerEvents: 'none',
+        zIndex: 10,
+      }}>
+        {VERSION}
+      </div>
     </div>
   )
 }
